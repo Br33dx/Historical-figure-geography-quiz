@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where &amp; When? History Map Quiz</title>
+<style>
+:root{--bg:#f1f3fb;--fg:#1a1d3a;--sea:#cfe0f5;--land:#fff;--ln:#8a93c0;--card:#fff;--ac:#4f46e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1d3a;--fg:#eef0ff;--sea:#243066;--land:#e8ecf5;--ln:#6b74a8;--card:#252a52}}
+:root[data-theme="dark"]{--bg:#1a1d3a;--fg:#eef0ff;--sea:#243066;--land:#e8ecf5;--ln:#6b74a8;--card:#252a52}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}#theme{flex:0 0 auto;padding:6px 10px}
+:root[data-theme="parchment"]{--bg:#f4ead5;--fg:#3b2a1a;--sea:#c9d8d2;--land:#f7efd9;--ln:#8b6b3d;--card:#fbf5e6;--ac:#8b5a2b}
+:root[data-theme="ocean"]{--bg:#0b2545;--fg:#e6f1ff;--sea:#13315c;--land:#8da9c4;--ln:#4a6a94;--card:#134074;--ac:#1e88e5}
+:root[data-theme="forest"]{--bg:#12261b;--fg:#e8f5e9;--sea:#1b3a2a;--land:#a9cba3;--ln:#4f7a5c;--card:#1d3a2a;--ac:#2e9e5b}
+:root[data-theme="sunset"]{--bg:#2b1b2e;--fg:#ffeede;--sea:#4a2a52;--land:#f4c7a1;--ln:#a2587a;--card:#3a2540;--ac:#e4572e}
+:root[data-theme="neon"]{--bg:#0d0221;--fg:#f2e9ff;--sea:#150537;--land:#3a2a8c;--ln:#ff2e97;--card:#1b0b44;--ac:#ff2e97}
+.mw{position:relative}.cdw{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.72);color:#fff;padding:8px 16px;border-radius:999px;font-weight:600}.cdw b{font-size:1.4rem;font-variant-numeric:tabular-nums}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.2em 0}
+.lg{font-size:1.05rem;font-weight:600;margin:.4em 0}
+.g{color:#16a34a}.r{color:#dc2626}
+svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--ln)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.bar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-weight:600}
+.dd{position:relative;flex:1 1 220px}.sg{position:absolute;left:0;right:0;top:100%;z-index:9;margin-top:2px;max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--ln);border-radius:8px}.sg div{padding:8px 10px;cursor:pointer}.sg .on,.sg div:hover{background:var(--ac);color:#fff}
+input{width:100%;box-sizing:border-box;padding:10px;font-size:1rem;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--fg)}
+button{padding:10px 14px;font-size:1rem;border-radius:8px;border:0;background:var(--ac);color:#fff;cursor:pointer}
+button.s{background:var(--card);color:var(--fg);border:1px solid var(--ln)}
+button:disabled{opacity:.45;cursor:default}
+.box{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px 14px;margin:10px 0}
+.big{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
+#msg{font-size:1.1rem;min-height:1.6em}
+table{width:100%;border-collapse:collapse}td{padding:5px 6px;border-bottom:1px solid var(--ln)}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+.hn{font-size:1.05rem;font-weight:600;min-height:1.4em;margin:4px 0}
+select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--fg)}
+</style></head>
+<body><main>
+<div class="top"><h1>Where &amp; When? History Map Quiz</h1><select id="theme" aria-label="Color scheme"></select></div>
+<div class="bar"><span id="rd"></span><span id="tot"></span></div>
+<div class="lg"><span class="g">Green: birth date / place</span> &nbsp; <span class="r">Red: death date / place</span></div>
+<div class="mw"><svg id="map" viewBox="0 0 360 150"></svg><div id="cdw" class="cdw" hidden>Study the map · answers open in <b id="cd">3</b></div></div>
+<div class="row" id="catrow"><select id="cat"></select></div>
+<div id="play">
+<div class="box">Speed bonus: <span class="big" id="sp">1000</span> &nbsp; Correct guess: <span class="big" id="cg">1000</span></div>
+<div class="row"><div class="dd"><input id="q" placeholder="Type a name…" autocomplete="off"><div id="sg" class="sg" hidden></div></div>
+<button id="go">Guess</button><button class="s" id="hint">Hint</button><button class="s" id="give">Give up</button></div>
+<div id="msg"></div><div id="hints" class="hn"></div>
+<div class="row"><button id="nx" hidden>Next person</button></div>
+</div>
+<div id="end" class="box" hidden></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.all.min.js"></script>
+<script>
+const D=`
+Napoleon Bonaparte|15.8.1769|41.9|8.7|5.5.1821|-16|-5.7|P|War & conquest|emperor|Crowned himself emperor, lost at Waterloo
+Albert Einstein|14.3.1879|48.4|10|18.4.1955|40.2|-74.8|S|Science & ideas|physicist|Relativity theorist
+Leonardo da Vinci|15.4.1452|43.8|10.9|2.5.1519|47.4|1|V|Visual art|painter & inventor|Painted the Mona Lisa and The Last Supper
+William Shakespeare|23.4.1564|52.2|-1.7|23.4.1616|52.2|-1.7|L|Literature|playwright|Author of Hamlet and Macbeth
+Isaac Newton|4.1.1643|52.8|-0.6|31.3.1727|51.5|-0.2|S|Science & ideas|physicist|Laws of motion and gravity
+Wolfgang Amadeus Mozart|27.1.1756|47.8|13|5.12.1791|48.2|16.4|M|Music|composer|Child prodigy who wrote The Magic Flute
+Ludwig van Beethoven|16.12.1770|50.7|7.1|26.3.1827|48.2|16.4|M|Music|composer|Wrote the Ninth Symphony while deaf
+Johann Sebastian Bach|31.3.1685|51|10.3|28.7.1750|51.3|12.4|M|Music|composer|Baroque master of the fugue and organ
+Charles Darwin|12.2.1809|52.7|-2.8|19.4.1882|51.3|0|S|Science & ideas|naturalist|Author of On the Origin of Species
+Galileo Galilei|15.2.1564|43.7|10.4|8.1.1642|43.8|11.3|S|Science & ideas|astronomer|Telescope pioneer tried by the Inquisition
+Marie Curie|7.11.1867|52.2|21|4.7.1934|45.9|6.7|S|Science & ideas|physicist & chemist|Discovered polonium and radium
+Nikola Tesla|10.7.1856|44.6|15.3|7.1.1943|40.8|-74|S|Science & ideas|inventor|Alternating-current and induction motor pioneer
+Mahatma Gandhi|2.10.1869|21.6|69.6|30.1.1948|28.6|77.2|P|Politics & power|independence leader|Salt March and nonviolent resistance
+Abraham Lincoln|12.2.1809|37.5|-85.7|15.4.1865|38.9|-77|P|Politics & power|president|Civil War president, Gettysburg Address
+George Washington|22.2.1732|38.2|-76.9|14.12.1799|38.7|-77.1|P|War & conquest|president|First president and Revolutionary War commander
+Julius Caesar|12.7.100 BC|41.9|12.5|15.3.44 BC|41.9|12.5|P|War & conquest|general & dictator|Crossed the Rubicon, killed on the Ides of March
+Alexander the Great|20.7.356 BC|40.8|22.5|10.6.323 BC|32.5|44.4|P|War & conquest|conqueror|Aristotle's student who conquered Persia
+Cleopatra VII|69 BC|31.2|29.9|10.8.30 BC|31.2|29.9|P|Politics & power|queen|Last pharaoh, ally of Caesar and Antony
+Joan of Arc|c. 1412|48.4|5.7|30.5.1431|49.4|1.1|P|War & conquest|military leader|Teenage visionary who lifted the siege of Orléans
+Christopher Columbus|1451|44.4|8.9|20.5.1506|41.6|-4.7|E|Exploration|navigator|1492 voyage across the Atlantic
+Vincent van Gogh|30.3.1853|51.5|4.7|29.7.1890|49.1|2.1|V|Visual art|painter|Painted Starry Night, cut off part of his ear
+Pablo Picasso|25.10.1881|36.7|-4.4|8.4.1973|43.6|7|V|Visual art|painter|Co-founded Cubism, painted Guernica
+Michelangelo|6.3.1475|43.6|12|18.2.1564|41.9|12.5|V|Visual art|sculptor & painter|Carved David, painted the Sistine ceiling
+Rembrandt|15.7.1606|52.2|4.5|4.10.1669|52.4|4.9|V|Visual art|painter|Painted The Night Watch
+Winston Churchill|30.11.1874|51.8|-1.4|24.1.1965|51.5|-0.1|P|War & conquest|prime minister|Wartime leader who also won the Nobel in Literature
+Adolf Hitler|20.4.1889|48.3|13|30.4.1945|52.5|13.4|P|War & conquest|dictator|Nazi leader behind the Holocaust
+Joseph Stalin|18.12.1878|42|44.1|5.3.1953|55.7|37.5|P|Politics & power|dictator|Led a communist superpower through WWII
+Vladimir Lenin|22.4.1870|54.3|48.4|21.1.1924|55.4|37.8|P|Politics & power|revolutionary|Bolshevik leader of the 1917 revolution
+Karl Marx|5.5.1818|49.8|6.6|14.3.1883|51.5|-0.1|P|Politics & power|philosopher|Wrote The Communist Manifesto and Das Kapital
+Mao Zedong|26.12.1893|27.9|112.5|9.9.1976|39.9|116.4|P|War & conquest|revolutionary leader|Long March and Cultural Revolution
+Martin Luther King Jr.|15.1.1929|33.8|-84.4|4.4.1968|35.1|-90|H|Activism & humanitarian|civil rights leader|"I Have a Dream" speaker
+John F. Kennedy|29.5.1917|42.3|-71.1|22.11.1963|32.8|-96.8|P|Politics & power|president|Youngest elected president, shot in Dallas
+Queen Victoria|24.5.1819|51.5|-0.2|22.1.1901|50.7|-1.3|P|Politics & power|queen|Monarch who gave her name to an era
+Elizabeth I|7.9.1533|51.5|0|24.3.1603|51.5|-0.3|P|Politics & power|queen|Her navy defeated the Armada in 1588
+Henry VIII|28.6.1491|51.5|0|28.1.1547|51.5|-0.1|P|Politics & power|king|Broke with Rome, married six times
+Louis XIV|5.9.1638|48.9|2.1|1.9.1715|48.8|2.1|P|Politics & power|king|Built Versailles, reigned 72 years
+Marie Antoinette|2.11.1755|48.2|16.4|16.10.1793|48.9|2.3|P|Politics & power|queen|Guillotined queen ("let them eat cake")
+Catherine the Great|2.5.1729|53.4|14.6|17.11.1796|59.9|30.3|P|Politics & power|empress|Expanded her empire in the 18th century
+Peter the Great|9.6.1672|55.8|37.6|8.2.1725|59.9|30.3|P|Politics & power|tsar|Founded St Petersburg
+Frederick the Great|24.1.1712|52.5|13.4|17.8.1786|52.4|13.1|P|War & conquest|king & general|Enlightened warrior king of the Seven Years' War
+Aristotle|384 BC|40.6|23.8|322 BC|38.5|23.6|S|Science & ideas|philosopher|Tutor of Alexander, founded the Lyceum
+Ferdinand Magellan|1480|41.3|-7.6|27.4.1521|10.3|124|E|Exploration|navigator|His expedition completed the first circumnavigation
+James Cook|27.10.1728|54.5|-1.2|14.2.1779|19.5|-155.9|E|Exploration|navigator|Charted Australia's east coast and Hawaii
+Sigmund Freud|6.5.1856|49.6|18.2|23.9.1939|51.5|-0.2|S|Science & ideas|psychologist|Founder of psychoanalysis
+Franz Kafka|3.7.1883|50.1|14.4|3.6.1924|48.3|16.3|L|Literature|novelist|Author of The Metamorphosis
+Fyodor Dostoevsky|11.11.1821|55.8|37.6|9.2.1881|59.9|30.3|L|Literature|novelist|Author of Crime and Punishment
+Leo Tolstoy|9.9.1828|54.1|37.5|20.11.1910|53.5|39.5|L|Literature|novelist|Author of War and Peace and Anna Karenina
+Victor Hugo|26.2.1802|47.2|6|22.5.1885|48.9|2.3|L|Literature|novelist|Author of Les Misérables
+Charles Dickens|7.2.1812|50.8|-1.1|9.6.1870|51.4|0.5|L|Literature|novelist|Author of Oliver Twist and A Christmas Carol
+Mark Twain|30.11.1835|39.5|-91.8|21.4.1910|41.3|-73.4|L|Literature|novelist|Author of Tom Sawyer and Huckleberry Finn
+Johann Wolfgang von Goethe|28.8.1749|50.1|8.7|22.3.1832|51|11|L|Literature|poet|Author of Faust
+Friedrich Nietzsche|15.10.1844|51.2|12.1|25.8.1900|51|11|S|Science & ideas|philosopher|"God is dead" thinker, wrote Zarathustra
+Frédéric Chopin|1.3.1810|52.3|20.2|17.10.1849|48.9|2.3|M|Music|composer|Piano nocturnes and polonaises
+Pyotr Tchaikovsky|7.5.1840|57.1|54|6.11.1893|59.9|30.3|M|Music|composer|Composed Swan Lake and The Nutcracker
+Claude Monet|14.11.1840|48.9|2.3|5.12.1926|49.1|1.5|V|Visual art|painter|Impressionist of the water lilies
+Walt Disney|5.12.1901|41.9|-87.6|15.12.1966|34.2|-118.3|A|Film & entertainment|animator|Created Mickey Mouse and Disneyland
+Elvis Presley|8.1.1935|34.3|-88.7|16.8.1977|35.1|-90|M|Music|singer|"The King" of rock 'n' roll
+John Lennon|9.10.1940|53.4|-3|8.12.1980|40.8|-74|M|Music|musician|Beatles co-founder, wrote "Imagine"
+Michael Jackson|29.8.1958|41.6|-87.3|25.6.2009|34.1|-118.4|M|Music|singer|"King of Pop", Thriller album
+Bob Marley|6.2.1945|18.4|-77.1|11.5.1981|25.8|-80.2|M|Music|musician|Reggae star of "No Woman, No Cry"
+Jimi Hendrix|27.11.1942|47.6|-122.3|18.9.1970|51.5|-0.2|M|Music|guitarist|Woodstock guitarist who set the anthem on fire
+Princess Diana|1.7.1961|52.8|0.5|31.8.1997|48.9|2.3|H|Activism & humanitarian|princess|"People's princess", first wife of Charles
+Muhammad Ali|17.1.1942|38.3|-85.8|3.6.2016|33.4|-112.1|X|Sport|boxer|"Float like a butterfly" heavyweight champion
+Che Guevara|14.6.1928|-33|-60.6|9.10.1967|-18.8|-64.1|P|War & conquest|revolutionary|Guerrilla of the famous beret poster
+Fidel Castro|13.8.1926|20.7|-75.8|25.11.2016|23.1|-82.4|P|Politics & power|revolutionary|Led his island for almost five decades
+Nelson Mandela|18.7.1918|-32|28.5|5.12.2013|-26.2|28|P|Politics & power|statesman|Freed after 27 years, ended apartheid as president
+Simón Bolívar|24.7.1783|10.5|-66.9|17.12.1830|11.2|-74.2|P|War & conquest|liberator|"El Libertador" of the 1810s-20s independence wars
+Hồ Chí Minh|19.5.1890|18.7|105.6|2.9.1969|21|105.8|P|War & conquest|revolutionary|Leader of the Viet Minh independence movement
+Sun Yat-sen|12.11.1866|22.4|113.5|12.3.1925|39.9|116.4|P|Politics & power|revolutionary|Founding father of a republic after the 1911 revolution
+Hannibal|247 BC|36.9|10.3|183 BC|40.8|29.4|P|War & conquest|general|Crossed the Alps with elephants
+Leonhard Euler|15.4.1707|47.6|7.6|18.9.1783|59.9|30.3|S|Science & ideas|mathematician|Euler's number and identity
+Alan Turing|23.6.1912|51.5|-0.2|7.6.1954|53.3|-2.2|S|Science & ideas|mathematician|Broke Enigma, Turing test
+Thomas Edison|11.2.1847|41.4|-82.6|18.10.1931|40.8|-74.2|S|Science & ideas|inventor|Phonograph, motion pictures, practical light bulb
+Alexander Graham Bell|3.3.1847|56|-3.2|2.8.1922|46.1|-60.8|S|Science & ideas|inventor|First practical telephone
+Louis Pasteur|27.12.1822|47.1|5.5|28.9.1895|48.8|2.2|S|Science & ideas|microbiologist|Pasteurization and rabies vaccine
+Nicolaus Copernicus|19.2.1473|53|18.6|24.5.1543|54.4|19.7|S|Science & ideas|astronomer|Put the Sun at the center
+Johannes Kepler|27.12.1571|48.8|9|15.11.1630|49|12.1|S|Science & ideas|astronomer|Three laws of planetary motion
+Gregor Mendel|20.7.1822|49.8|17.9|6.1.1884|49.2|16.6|S|Science & ideas|monk & botanist|Pea-plant experiments, genetics
+Ernest Hemingway|21.7.1899|41.9|-87.8|2.7.1961|43.7|-114.4|L|Literature|novelist|Author of The Old Man and the Sea
+Mother Teresa|26.8.1910|42|21.4|5.9.1997|22.6|88.4|H|Activism & humanitarian|nun|Founded the Missionaries of Charity
+Anne Frank|12.6.1929|50.1|8.7|Feb/Mar 1945|52.8|9.9|L|Literature|diarist|Hid in an Amsterdam annex in WWII
+Nicholas II|18.5.1868|59.7|30.4|17.7.1918|56.8|60.6|P|Politics & power|tsar|Last tsar, executed in 1918
+Saladin|1137|34.6|43.7|4.3.1193|33.5|36.3|P|War & conquest|sultan|Crusader-era sultan who retook Jerusalem
+Mustafa Kemal Atatürk|1881|40.6|22.9|10.11.1938|41|29|P|War & conquest|general & president|Gallipoli hero who founded a modern republic
+Franklin D. Roosevelt|30.1.1882|41.8|-73.9|12.4.1945|32.9|-84.7|P|Politics & power|president|Four-term president of the New Deal and WWII
+Benjamin Franklin|17.1.1706|42.4|-71.1|17.4.1790|40|-75.2|P|Politics & power|statesman & inventor|Lightning rod inventor on the $100 bill
+Neil Armstrong|5.8.1930|40.6|-84.2|25.8.2012|39.1|-84.5|E|Exploration|astronaut|Apollo 11, "one small step"
+Yuri Gagarin|9.3.1934|55.5|35|27.3.1968|56.2|38.9|E|Exploration|cosmonaut|Vostok 1, April 1961
+Charles de Gaulle|22.11.1890|50.6|3.1|9.11.1970|48.3|4.9|P|Politics & power|general & president|Wartime resistance leader, founded the Fifth Republic
+Jane Austen|16.12.1775|51.2|-1.2|18.7.1817|51.1|-1.3|L|Literature|novelist|Author of Pride and Prejudice
+Agatha Christie|15.9.1890|50.5|-3.5|12.1.1976|51.6|-1.1|L|Literature|novelist|Creator of Poirot and Miss Marple
+Hans Christian Andersen|2.4.1805|55.4|10.4|4.8.1875|55.7|12.6|L|Literature|author|Wrote The Little Mermaid and The Ugly Duckling
+Edvard Munch|12.12.1863|60.8|11.4|23.1.1944|59.9|10.7|V|Visual art|painter|Painted The Scream
+Alfred Nobel|21.10.1833|59.3|18.1|10.12.1896|43.8|7.8|S|Science & ideas|inventor|Invented dynamite, founded the Nobel Prizes
+Vasco da Gama|1469|38|-8.9|24.12.1524|10|76.2|E|Exploration|navigator|First sea route from Europe to India
+Oscar Wilde|16.10.1854|53.3|-6.3|30.11.1900|48.9|2.3|L|Literature|playwright|Author of The Picture of Dorian Gray
+Edgar Allan Poe|19.1.1809|42.4|-71.1|7.10.1849|39.3|-76.6|L|Literature|author|Wrote "The Raven", detective-fiction pioneer
+Lord Byron|22.1.1788|51.5|-0.1|19.4.1824|38.4|21.4|L|Literature|poet|Romantic poet who died in a war of independence
+Horatio Nelson|29.9.1758|53|0.8|21.10.1805|36.2|-6|P|War & conquest|admiral|Victor and casualty of Trafalgar
+Florence Nightingale|12.5.1820|43.8|11.3|13.8.1910|51.5|-0.1|H|Activism & humanitarian|nurse|"Lady with the Lamp" of the Crimean War
+Jean-Jacques Rousseau|28.6.1712|46.2|6.1|2.7.1778|49.1|2.7|S|Science & ideas|philosopher|Author of The Social Contract
+René Descartes|31.3.1596|47|0.8|11.2.1650|59.3|18.1|S|Science & ideas|philosopher|"I think, therefore I am"
+Blaise Pascal|19.6.1623|45.8|3.1|19.8.1662|48.9|2.3|S|Science & ideas|mathematician|Pascal's triangle and Pensées
+Freddie Mercury|5.9.1946|-6.2|39.2|24.11.1991|51.5|-0.2|M|Music|singer|Queen frontman of "Bohemian Rhapsody"
+Bruce Lee|27.11.1940|37.8|-122.4|20.7.1973|22.3|114.2|A|Film & entertainment|martial artist|Enter the Dragon star, Jeet Kune Do founder
+Pelé|23.10.1940|-21.7|-45.3|29.12.2022|-23.6|-46.6|X|Sport|footballer|Three-time World Cup winner
+Pope John Paul II|18.5.1920|49.9|19.5|2.4.2005|41.9|12.5|H|Activism & humanitarian|pope|Pope for 26 years, survived a 1981 shooting
+Dmitri Mendeleev|8.2.1834|58.2|68.3|2.2.1907|59.9|30.3|S|Science & ideas|chemist|Created the periodic table
+Alexander Pushkin|6.6.1799|55.8|37.6|10.2.1837|59.9|30.3|L|Literature|poet|Author of Eugene Onegin
+Anton Chekhov|29.1.1860|47.2|38.9|15.7.1904|47.8|7.7|L|Literature|playwright|Wrote The Cherry Orchard and Three Sisters
+Richard Wagner|22.5.1813|51.3|12.4|13.2.1883|45.4|12.3|M|Music|composer|Ring cycle opera composer
+George Frideric Handel|23.2.1685|51.5|12|14.4.1759|51.5|-0.1|M|Music|composer|Composed Messiah and Water Music
+Antonio Vivaldi|4.3.1678|45.4|12.3|28.7.1741|48.2|16.4|M|Music|composer|Composed The Four Seasons
+Leon Trotsky|7.11.1879|47.9|32|21.8.1940|19.4|-99.1|P|War & conquest|revolutionary|Red Army founder killed with an ice axe
+Benito Mussolini|29.7.1883|44.1|12|28.4.1945|46|9.2|P|War & conquest|dictator|Il Duce, founder of fascism
+Thomas Aquinas|c. 1225|41.6|13.7|7.3.1274|41.4|13.2|S|Science & ideas|theologian|Author of Summa Theologica
+Suleiman the Magnificent|6.11.1494|41|39.7|7.9.1566|46.1|17.8|P|War & conquest|sultan|Ruled at his empire's peak, besieged Vienna
+Akbar|15.10.1542|25.4|69.7|27.10.1605|27.2|78|P|Politics & power|emperor|Built Fatehpur Sikri, expanded his empire
+Otto von Bismarck|1.4.1815|52.6|12|30.7.1898|53.5|10.4|P|Politics & power|chancellor|"Iron Chancellor" of the 1871 unification
+Elizabeth II|21.4.1926|51.5|-0.15|8.9.2022|57|-3.2|P|Politics & power|queen|Reigned 70 years until 2022
+Margaret Thatcher|13.10.1925|52.9|-0.6|8.4.2013|51.5|-0.1|P|Politics & power|prime minister|"Iron Lady" of the 1980s
+Ronald Reagan|6.2.1911|41.6|-89.8|5.6.2004|34.1|-118.4|P|Politics & power|president|Former actor, 40th president
+Indira Gandhi|19.11.1917|25.4|81.8|31.10.1984|28.6|77.2|P|Politics & power|prime minister|Daughter of a prime minister, assassinated in 1984
+Jawaharlal Nehru|14.11.1889|25.4|81.8|27.5.1964|28.6|77.2|P|Politics & power|prime minister|First prime minister after independence
+Kwame Nkrumah|21.9.1909|4.9|-2.3|27.4.1972|44.4|26.1|P|Politics & power|president|Led the first sub-Saharan colony to independence
+Gamal Abdel Nasser|15.1.1918|31.2|29.9|28.9.1970|30|31.2|P|Politics & power|president|Nationalized the Suez Canal
+Charlie Chaplin|16.4.1889|51.5|-0.1|25.12.1977|46.5|6.8|A|Film & entertainment|actor|The Tramp, The Great Dictator
+Alfred Hitchcock|13.8.1899|51.5|0|29.4.1980|34.1|-118.4|A|Film & entertainment|film director|Directed Psycho and Vertigo
+Audrey Hepburn|4.5.1929|50.8|4.4|20.1.1993|46.5|6.5|A|Film & entertainment|actress|Breakfast at Tiffany's star and UNICEF ambassador
+Michael Faraday|22.9.1791|51.5|-0.1|25.8.1867|51.4|-0.4|S|Science & ideas|physicist|Electromagnetic induction pioneer
+James Clerk Maxwell|13.6.1831|55.95|-3.2|5.11.1879|52.2|0.1|S|Science & ideas|physicist|Unified electricity and magnetism
+Max Planck|23.4.1858|54.3|10.1|4.10.1947|51.5|9.9|S|Science & ideas|physicist|Originator of quantum theory
+Werner Heisenberg|5.12.1901|49.8|9.9|1.2.1976|48.1|11.6|S|Science & ideas|physicist|Uncertainty principle
+Richard Feynman|11.5.1918|40.7|-73.8|15.2.1988|34.1|-118.4|S|Science & ideas|physicist|Feynman diagrams, Challenger investigation
+Carl Linnaeus|23.5.1707|56.6|14.1|10.1.1778|59.9|17.6|S|Science & ideas|botanist|Inventor of binomial nomenclature
+Alexander Fleming|6.8.1881|55.6|-4.3|11.3.1955|51.5|-0.1|S|Science & ideas|biologist|Discovered penicillin
+Stephen Hawking|8.1.1942|51.75|-1.26|14.3.2018|52.2|0.12|S|Science & ideas|physicist|Wrote A Brief History of Time
+Dante Alighieri|c. 1265|43.8|11.3|14.9.1321|44.4|12.2|L|Literature|poet|Wrote the Divine Comedy
+Miguel de Cervantes|29.9.1547|40.5|-3.4|22.4.1616|40.4|-3.7|L|Literature|author|Wrote Don Quixote
+Jules Verne|8.2.1828|47.2|-1.6|24.3.1905|49.9|2.3|L|Literature|novelist|Wrote Twenty Thousand Leagues Under the Sea
+Alexandre Dumas|24.7.1802|49.3|3.1|5.12.1870|49.9|1.1|L|Literature|novelist|Wrote The Count of Monte Cristo
+Thomas Mann|6.6.1875|53.9|10.7|12.8.1955|47.4|8.5|L|Literature|novelist|Wrote The Magic Mountain, Nobel laureate
+George Orwell|25.6.1903|26.7|84.9|21.1.1950|51.5|-0.1|L|Literature|novelist|Wrote Animal Farm and Nineteen Eighty-Four
+J. R. R. Tolkien|3.1.1892|-29.1|26.2|2.9.1973|50.7|-1.9|L|Literature|author|Wrote The Hobbit and The Lord of the Rings
+Roald Dahl|13.9.1916|51.5|-3.2|23.11.1990|51.75|-1.26|L|Literature|author|Wrote Charlie and the Chocolate Factory
+Lewis Carroll|27.1.1832|53.3|-2.6|14.1.1898|51.2|-0.6|L|Literature|author|Wrote Alice's Adventures in Wonderland
+Gabriel García Márquez|6.3.1927|10.5|-74.2|17.4.2014|19.4|-99.2|L|Literature|novelist|Wrote One Hundred Years of Solitude
+Pablo Neruda|12.7.1904|-36.2|-71.8|23.9.1973|-33.4|-70.7|L|Literature|poet|Nobel poet of Twenty Love Poems
+Jorge Luis Borges|24.8.1899|-34.6|-58.4|14.6.1986|46.2|6.1|L|Literature|writer|Blind librarian who wrote Labyrinths
+Raphael|6.4.1483|43.7|12.6|6.4.1520|41.9|12.5|V|Visual art|painter|Painted The School of Athens
+Caravaggio|29.9.1571|45.5|9.2|18.7.1610|42.4|11.1|V|Visual art|painter|Dramatic chiaroscuro painter who killed a man
+Diego Velázquez|6.6.1599|37.4|-6|6.8.1660|40.4|-3.7|V|Visual art|painter|Painted Las Meninas
+Francisco Goya|30.3.1746|41.7|-0.9|16.4.1828|44.8|-0.6|V|Visual art|painter|Painted The Third of May 1808
+Paul Gauguin|7.6.1848|48.9|2.3|8.5.1903|-9.8|-139|V|Visual art|painter|Left for the South Seas to paint
+Andy Warhol|6.8.1928|40.4|-80|22.2.1987|40.8|-74|V|Visual art|artist|Campbell's Soup cans and Marilyn prints
+Henri Matisse|31.12.1869|50.1|3.5|3.11.1954|43.7|7.3|V|Visual art|painter|Fauvism leader, paper cut-outs
+Joseph Haydn|31.3.1732|48.1|16.9|31.5.1809|48.2|16.4|M|Music|composer|"Father of the symphony", Beethoven's teacher
+Johannes Brahms|7.5.1833|53.6|10|3.4.1897|48.2|16.4|M|Music|composer|Composed a famous Lullaby and four symphonies
+Giacomo Puccini|22.12.1858|43.8|10.5|29.11.1924|50.8|4.4|M|Music|composer|Composed La Bohème and Tosca
+Giuseppe Verdi|10.10.1813|45|10|27.1.1901|45.5|9.2|M|Music|composer|Composed La Traviata and Aida
+Claude Debussy|22.8.1862|48.9|2.1|25.3.1918|48.9|2.3|M|Music|composer|Composed Clair de Lune
+Igor Stravinsky|17.6.1882|59.9|29.8|6.4.1971|40.8|-74|M|Music|composer|Composed The Rite of Spring
+Franz Liszt|22.10.1811|47.5|16.6|31.7.1886|49.9|11.6|M|Music|pianist|Virtuoso who sparked "Lisztomania"
+Louis Armstrong|4.8.1901|30|-90.1|6.7.1971|40.7|-73.9|M|Music|trumpeter|"What a Wonderful World" jazz legend
+Frank Sinatra|12.12.1915|40.7|-74|14.5.1998|34.1|-118.4|M|Music|singer|"My Way" crooner and Rat Pack member
+David Bowie|8.1.1947|51.5|-0.1|10.1.2016|40.7|-74|M|Music|musician|Created Ziggy Stardust
+Johnny Cash|26.2.1932|33.9|-92.3|12.9.2003|36.2|-86.8|M|Music|singer|"Man in Black" of "Ring of Fire"
+Jesse Owens|12.9.1913|34.6|-87|31.3.1980|32.2|-110.9|X|Sport|sprinter|Four golds at the 1936 Olympics
+Diego Maradona|30.10.1960|-34.7|-58.4|25.11.2020|-34.4|-58.6|X|Sport|footballer|"Hand of God", 1986 World Cup winner
+Ayrton Senna|21.3.1960|-23.5|-46.6|1.5.1994|44.4|11.7|X|Sport|driver|Three-time F1 champion killed at Imola
+Pierre de Coubertin|1.1.1863|48.9|2.3|2.9.1937|46.2|6.1|X|Sport|sports official|Founder of the modern Olympic Games
+Babe Ruth|6.2.1895|39.3|-76.6|16.8.1948|40.8|-74|X|Sport|baseball player|"Sultan of Swat" of the Yankees
+Bobby Fischer|9.3.1943|41.9|-87.6|17.1.2008|64.1|-21.9|X|Sport|chess player|Beat Spassky in 1972
+Ernest Shackleton|15.2.1874|52.9|-6.9|5.1.1922|-54.3|-36.5|E|Exploration|polar explorer|Led the Endurance expedition
+Hernán Cortés|1485|38.9|-6.5|2.12.1547|37.4|-6.1|E|War & conquest|conquistador|Conquered the Aztec empire
+Francisco Pizarro|c. 1478|39.3|-6.4|26.6.1541|-12|-77|E|War & conquest|conquistador|Conquered the Inca empire
+Amerigo Vespucci|9.3.1454|43.8|11.3|22.2.1512|37.4|-6|E|Exploration|navigator|Namesake of the Americas
+Charles Lindbergh|4.2.1902|42.3|-83.1|26.8.1974|20.7|-156.1|E|Exploration|aviator|First solo non-stop transatlantic flight
+Thor Heyerdahl|6.10.1914|59|10|18.4.2002|44.1|8.1|E|Exploration|adventurer|Crossed the Pacific on the Kon-Tiki raft
+Jacques Cousteau|11.6.1910|45|-0.4|25.6.1997|48.9|2.3|E|Exploration|oceanographer|Co-invented the Aqua-Lung, captained the Calypso
+Augustus|23.9.63 BC|41.9|12.5|19.8.14|40.9|14.5|P|Politics & power|emperor|First emperor, Caesar's adopted heir
+William the Conqueror|c. 1028|48.9|-0.2|9.9.1087|49.4|1.1|P|War & conquest|king|Won at Hastings in 1066
+Richard the Lionheart|8.9.1157|51.8|-1.3|6.4.1199|45.7|1|P|War & conquest|king|Crusader king of the Third Crusade
+Isabella I of Castile|22.4.1451|40.9|-5|26.11.1504|41.3|-4.9|P|Politics & power|queen|Funded Columbus, completed the Reconquista
+Oliver Cromwell|25.4.1599|52.3|-0.2|3.9.1658|51.5|-0.1|P|War & conquest|Lord Protector|Led Parliament's army, ruled without a king
+Ulysses S. Grant|27.4.1822|38.9|-84.2|23.7.1885|43.2|-73.7|P|War & conquest|general & president|Union commander who accepted Lee's surrender
+Harriet Tubman|c. 1822|38.5|-76|10.3.1913|42.9|-76.6|H|Activism & humanitarian|abolitionist|Underground Railroad "conductor"
+Frederick Douglass|Feb 1818|38.8|-76.1|20.2.1895|38.9|-77|H|Activism & humanitarian|abolitionist|Escaped slavery to become an orator and author
+Rosa Parks|4.2.1913|32.4|-85.7|24.10.2005|42.3|-83|H|Activism & humanitarian|activist|Refused to give up her bus seat in 1955
+Malcolm X|19.5.1925|41.3|-96|21.2.1965|40.8|-73.9|H|Activism & humanitarian|activist|Nation of Islam spokesman, assassinated 1965
+Pope Francis|17.12.1936|-34.6|-58.4|21.4.2025|41.9|12.5|H|Activism & humanitarian|pope|First Jesuit pope
+Zhou Enlai|5.3.1898|33.6|119|8.1.1976|39.9|116.4|P|Politics & power|premier|Long-serving premier under Mao
+Deng Xiaoping|22.8.1904|30.5|106.6|19.2.1997|39.9|116.4|P|Politics & power|leader|Architect of market reforms after Mao
+Mary, Queen of Scots|8.12.1542|56|-3.5|8.2.1587|52.5|-0.5|P|Politics & power|queen|Beheaded rival of Elizabeth I
+Albert Schweitzer|14.1.1875|48.1|7.3|4.9.1965|-0.7|10.2|H|Activism & humanitarian|doctor|Hospital founder in Lambaréné, Nobel Peace Prize
+Louis Braille|4.1.1809|48.9|2.9|6.1.1852|48.9|2.3|S|Science & ideas|inventor|Six-dot tactile alphabet
+Samuel Morse|27.4.1791|42.4|-71.1|2.4.1872|40.8|-74|S|Science & ideas|inventor|Co-inventor of the telegraph code
+Guglielmo Marconi|25.4.1874|44.5|11.3|20.7.1937|41.9|12.5|S|Science & ideas|inventor|First transatlantic radio signal
+Gottfried Leibniz|1.7.1646|51.3|12.4|14.11.1716|52.4|9.7|S|Science & ideas|polymath|Co-inventor of calculus
+Carl Friedrich Gauss|30.4.1777|52.3|10.5|23.2.1855|51.5|9.9|S|Science & ideas|mathematician|"Prince of mathematicians", Gaussian distribution
+Amelia Earhart|24.7.1897|39.6|-95.1|lost 2.7.1937|0.8|176.6|E|Exploration|aviator|First woman to fly solo across the Atlantic
+Frida Kahlo|6.7.1907|19.4|-99.2|13.7.1954|19.4|-99.2|V|Visual art|painter|Self-portraits with a unibrow, The Two Fridas
+Marilyn Monroe|1.6.1926|34.1|-118.2|4.8.1962|34.1|-118.5|A|Film & entertainment|actress|Some Like It Hot and Gentlemen Prefer Blondes star
+Maria Callas|2.12.1923|40.8|-74|16.9.1977|48.9|2.3|M|Music|soprano|"La Divina" of opera
+Édith Piaf|19.12.1915|48.9|2.3|10.10.1963|43.7|6.9|M|Music|singer|"La Vie en rose" singer
+Aretha Franklin|25.3.1942|35.1|-90|16.8.2018|42.3|-83|M|Music|singer|"Respect" singer
+Whitney Houston|9.8.1963|40.7|-74.2|11.2.2012|34.1|-118.4|M|Music|singer|"I Will Always Love You" singer
+Golda Meir|3.5.1898|50.5|30.5|8.12.1978|31.8|35.2|P|Politics & power|prime minister|Prime minister during the 1973 war
+Benazir Bhutto|21.6.1953|24.9|67|27.12.2007|33.6|73|P|Politics & power|prime minister|First woman to lead a Muslim-majority country
+Eva Perón|7.5.1919|-35|-61|26.7.1952|-34.6|-58.4|P|Politics & power|first lady|"Evita", beloved first lady
+Maya Angelou|4.4.1928|38.6|-90.2|28.5.2014|36.1|-80.2|L|Literature|poet|Wrote I Know Why the Caged Bird Sings
+Toni Morrison|18.2.1931|41.5|-82.2|5.8.2019|40.8|-73.9|L|Literature|novelist|Wrote Beloved, Nobel laureate
+Astrid Lindgren|14.11.1907|57.7|15.9|28.1.2002|59.3|18.1|L|Literature|author|Created Pippi Longstocking
+Lise Meitner|7.11.1878|48.2|16.4|27.10.1968|52.2|0.1|S|Science & ideas|physicist|Co-discoverer of nuclear fission
+Sally Ride|26.5.1951|34.1|-118.2|23.7.2012|32.7|-117.2|E|Exploration|astronaut|Challenger astronaut and physicist
+Helen Keller|27.6.1880|34.7|-87.7|1.6.1968|41.1|-73.4|H|Activism & humanitarian|author & activist|Deaf-blind author taught by Anne Sullivan
+Susan B. Anthony|15.2.1820|42.6|-73.1|13.3.1906|43.2|-77.6|H|Activism & humanitarian|suffragist|Women's voting rights campaigner
+Greta Garbo|18.9.1905|59.3|18.1|15.4.1990|40.8|-74|A|Film & entertainment|actress|"I want to be alone" star
+Elizabeth Taylor|27.2.1932|51.5|-0.2|23.3.2011|34.1|-118.4|A|Film & entertainment|actress|Star of Cleopatra, married eight times
+Grace Kelly|12.11.1929|40|-75.2|14.9.1982|43.7|7.4|A|Film & entertainment|actress|Hollywood star who married a prince
+Wilma Rudolph|23.6.1940|36.5|-87.4|12.11.1994|36|-86.8|X|Sport|sprinter|Three golds at Rome 1960
+Kobe Bryant|23.8.1978|40|-75.2|26.1.2020|34.2|-118.7|X|Sport|basketball player|Five-time NBA champion with the Lakers
+Jim Thorpe|28.5.1887|35.5|-96.7|28.3.1953|33.8|-118.3|X|Sport|athlete|Decathlon and pentathlon gold, stripped of medals
+Jackie Robinson|31.1.1919|30.9|-84.2|24.10.1972|41.1|-73.5|X|Sport|baseball player|Broke baseball's color barrier in 1947
+Johan Cruyff|25.4.1947|52.4|4.9|24.3.2016|41.4|2.2|X|Sport|footballer|Total Football icon, the Cruyff turn
+Franz Beckenbauer|11.9.1945|48.1|11.6|7.1.2024|47.8|13|X|Sport|footballer|"Der Kaiser", World Cup winner as player and coach
+Niki Lauda|22.2.1949|48.2|16.4|20.5.2019|47.4|8.5|X|Sport|driver|F1 champion who returned after a fiery crash
+Arthur Ashe|10.7.1943|37.5|-77.4|6.2.1993|40.8|-74|X|Sport|tennis player|First Black man to win Wimbledon
+Emil Zátopek|19.9.1922|49.6|18.2|21.11.2000|50.1|14.4|X|Sport|runner|5,000 m, 10,000 m and marathon golds in 1952
+Paavo Nurmi|13.6.1897|60.5|22.3|2.10.1973|60.2|24.9|X|Sport|runner|Nine Olympic golds in the 1920s
+George Best|22.5.1946|54.6|-5.9|25.11.2005|51.5|-0.2|X|Sport|footballer|Manchester United's "fifth Beatle"
+José Raúl Capablanca|19.11.1888|23.1|-82.4|8.3.1942|40.8|-74|X|Sport|chess player|World champion called the "chess machine"
+Marco Polo|1254|45.4|12.3|8.1.1324|45.4|12.3|E|Exploration|merchant traveler|Wrote of Kublai Khan's court
+Edmund Hillary|20.7.1919|-36.9|174.8|11.1.2008|-36.9|174.8|E|Exploration|mountaineer|First to summit Mount Everest in 1953
+David Livingstone|19.3.1813|55.8|-4.1|1.5.1873|-12.9|31.1|E|Exploration|missionary|"Dr Livingstone, I presume?" and Victoria Falls
+Vitus Bering|12.8.1681|55.9|9.9|19.12.1741|55|166.2|E|Exploration|navigator|Has a strait named after him
+Francis Drake|c. 1540|50.5|-4.1|28.1.1596|9.6|-79.7|E|Exploration|sea captain|Circumnavigated the globe, fought the Armada
+George Mallory|18.6.1886|53.3|-2.3|8.6.1924|28|86.9|E|Exploration|mountaineer|Vanished on Everest in 1924
+Gertrude Bell|14.7.1868|54.9|-1.5|12.7.1926|33.3|44.4|E|Exploration|traveler & diplomat|Mapped the Middle East after WWI
+Alan Shepard|18.11.1923|42.9|-71.3|21.7.1998|36.6|-121.9|E|Exploration|astronaut|Mercury astronaut who golfed on the Moon
+`.trim().split("\n").map(l=>{const a=l.split("|");return{n:a[0],b:a[1],bla:+a[2],blo:+a[3],d:a[4],dla:+a[5],dlo:+a[6],c:a[7],h:[a[8],a[9],a[10]]}});
+const HINT={P:"Politics & war",S:"Science & philosophy",V:"Art (painting & sculpture)",A:"Film & entertainment",L:"Literature",M:"Music",E:"Exploration",X:"Sport",H:"Humanitarian & activism"};
+const WOM=new Set(["Joan of Arc", "Cleopatra VII", "Marie Curie", "Queen Victoria", "Elizabeth I", "Marie Antoinette", "Catherine the Great", "Mother Teresa", "Anne Frank", "Princess Diana", "Jane Austen", "Agatha Christie", "Florence Nightingale", "Elizabeth II", "Margaret Thatcher", "Indira Gandhi", "Audrey Hepburn", "Isabella I of Castile", "Harriet Tubman", "Rosa Parks", "Mary, Queen of Scots", "Amelia Earhart", "Frida Kahlo", "Marilyn Monroe", "Maria Callas", "Édith Piaf", "Aretha Franklin", "Whitney Houston", "Golda Meir", "Benazir Bhutto", "Eva Perón", "Maya Angelou", "Toni Morrison", "Astrid Lindgren", "Lise Meitner", "Sally Ride", "Helen Keller", "Susan B. Anthony", "Greta Garbo", "Elizabeth Taylor", "Grace Kelly", "Wilma Rudolph", "Gertrude Bell"]),WAR=new Set(["Napoleon Bonaparte", "Joan of Arc", "Alexander the Great", "Julius Caesar", "Hannibal", "Saladin", "Horatio Nelson", "George Washington", "Ulysses S. Grant", "Simón Bolívar", "Frederick the Great", "Richard the Lionheart", "William the Conqueror", "Hernán Cortés", "Francisco Pizarro", "Suleiman the Magnificent", "Mustafa Kemal Atatürk", "Winston Churchill", "Adolf Hitler", "Benito Mussolini", "Che Guevara", "Leon Trotsky", "Mao Zedong", "Hồ Chí Minh", "Oliver Cromwell"]);
+const yrOf=t=>{const m=t.match(/\d+/g),y=+m[m.length-1];return /BC/.test(t)?-y:y};
+D.forEach((p,k)=>{p.k=k;p.by=yrOf(p.b);p.dy=yrOf(p.d)});
+const usa=p=>p.bla>=24.5&&p.bla<=49.5&&p.blo>=-125&&p.blo<=-66.5;
+const eur=p=>p.n!=="Hannibal"&&p.blo>=-25&&p.blo<=60&&p.bla>=35&&p.bla<=72&&!(p.bla<42&&p.blo>26.5)&&!(p.blo>40&&p.bla<44);
+const CATS=[["All (hard mode)",p=>1],["Top 100",p=>p.k<100],["Born in USA",usa],["Born in Europe",eur],["Women",p=>WOM.has(p.n)],["Died in 2000 or later",p=>p.dy>=2000],
+["1900s (born 1900+)",p=>p.by>=1900],["1800s (born 1800-1899)",p=>p.by>=1800&&p.by<1900],["1500-1799 (born)",p=>p.by>=1500&&p.by<1800],["Before 1500 (born)",p=>p.by<1500],
+["Artists",p=>"VLMA".includes(p.c)],["Writers",p=>p.c==="L"],["Music & movies",p=>p.c==="M"||p.c==="A"],["War figures",p=>WAR.has(p.n)],["Scientists & thinkers",p=>p.c==="S"],
+["Died before 40",p=>p.dy-p.by<40],["Explorers & travelers",p=>p.c==="E"],["Sportsmen",p=>p.c==="X"]];
+$("cat").innerHTML=CATS.map((c,k)=>`<option value="${k}">${c[0]} (${D.filter(c[1]).length})</option>`).join("");
+
+// Real country shapes: decode the TopoJSON bundled inside Datamaps (no extra topojson library needed).
+function topoD(t){const tr=t.transform,k=tr?tr.scale:[1,1],o=tr?tr.translate:[0,0];
+const A=t.arcs.map(a=>{let x=0,y=0;return a.map(p=>{if(tr){x+=p[0];y+=p[1]}else{x=p[0];y=p[1]}return[+(x*k[0]+o[0]+180).toFixed(2),+(90-(y*k[1]+o[1])).toFixed(2)]})});
+const ring=r=>{let pts=[];r.forEach(i=>{const a=i<0?A[~i].slice().reverse():A[i];pts=pts.concat(pts.length?a.slice(1):a)});let off=0;pts=pts.map((p,j)=>{if(j){const d=p[0]-pts[j-1][0];if(d>180)off-=360;else if(d<-180)off+=360}return[+(p[0]+off).toFixed(2),p[1]]});return"M"+pts.map(p=>p.join(",")).join("L")+"Z"};
+const poly=p=>p.map(ring).join("");
+return Object.values(t.objects)[0].geometries.filter(g=>g.id!=="ATA").map(g=>g.type==="Polygon"?poly(g.arcs):g.type==="MultiPolygon"?g.arcs.map(poly).join(""):"").join("")}
+const L=["-168,66 -162,70 -150,71 -125,70 -95,72 -82,69 -62,60 -56,52 -66,45 -70,42 -76,35 -81,30 -80,25 -84,30 -90,29 -97,26 -97,20 -88,16 -83,10 -77,8 -80,7 -86,11 -92,14 -105,20 -110,24 -114,31 -117,32 -124,40 -124,48 -130,55 -140,60 -150,60 -158,57 -165,60",
+"-77,8 -72,12 -62,10 -52,5 -50,0 -35,-5 -39,-14 -41,-22 -48,-26 -58,-35 -65,-41 -68,-52 -72,-54 -74,-45 -71,-30 -70,-18 -76,-14 -81,-5 -80,0",
+"-55,60 -45,60 -20,70 -20,82 -60,82 -72,78 -58,70",
+"-9,37 -9,43 -2,44 -5,48 2,51 8,54 8,57 10,57 5,59 5,62 15,69 25,71 40,68 44,68 60,69 70,73 100,77 112,74 140,72 160,70 180,69 180,65 165,60 156,51 143,59 137,54 141,48 132,43 129,35 126,35 125,38 121,40 118,38 122,37 122,31 120,26 110,21 108,17 106,10 103,10 100,13 100,7 103,1 98,8 98,16 94,17 92,22 87,21 80,15 78,8 73,16 72,21 67,25 57,25 56,27 50,30 48,29 51,25 56,24 59,22 55,17 44,13 39,21 35,28 34,31 36,36 27,37 26,40 24,38 21,37 19,42 13,45 18,40 16,38 12,42 8,44 3,43 0,39 -5,36",
+"-17,21 -10,30 -6,36 10,37 11,33 20,31 32,31 35,28 43,12 51,12 40,-3 40,-15 35,-24 32,-29 20,-35 18,-32 12,-17 14,-10 9,-1 9,4 -8,4 -17,14",
+"114,-22 122,-18 130,-12 136,-12 142,-11 146,-19 153,-26 150,-37 141,-38 135,-35 131,-31 115,-34",
+"-5,50 1,51 2,53 -2,56 -3,58 -6,58 -5,55 -3,54 -5,52","130,31 135,34 140,36 142,40 141,45 139,40 135,35 131,34",
+"44,-25 47,-25 50,-15 49,-12 44,-17","95,5 106,-6 104,-6 98,0","109,1 117,7 119,1 116,-4 110,-3","131,-1 141,-3 150,-10 141,-9 132,-3",
+"172,-35 178,-38 174,-42 168,-47 167,-45","-24,64 -14,64 -14,66 -22,66","-85,22 -74,20 -78,22","-180,-90 180,-90 180,-72 -180,-72"];
+const P=s=>s.split(" ").map(p=>{const[a,b]=p.split(",");return(+a+180)+","+(90-b)}).join(" ");
+let land="";
+try{const d=topoD(Datamap.prototype.worldTopo);if(d.length>2000)land=`<path id="LD" d="${d}" fill="var(--land)" stroke="var(--ln)" stroke-width=".18" stroke-linejoin="round"/><use href="#LD" x="-360"/><use href="#LD" x="360"/>`}catch(e){}
+if(!land)land=L.map(s=>`<polygon points="${P(s)}" fill="var(--land)" stroke="var(--ln)" stroke-width=".4"/>`).join("");
+const base=`<rect width="360" height="150" fill="var(--sea)"/>`+land;
+
+function lab(x,y,t,c,up){const w=t.length*2.5+4,h=6.5;const rx=Math.min(Math.max(x-w/2,1),359-w);let ry=up?y-h-5:y+5;ry=Math.min(Math.max(ry,1),149-h);
+return `<line x1="${x}" y1="${y}" x2="${rx+w/2}" y2="${up?ry+h:ry}" stroke="${c}" stroke-width=".6"/><rect x="${rx}" y="${ry}" width="${w}" height="${h}" rx="1" fill="${c}"/><text x="${rx+w/2}" y="${ry+4.6}" font-size="4.2" fill="#fff" text-anchor="middle" font-weight="600">${t}</text>`}
+function draw(p){const bx=p.blo+180,by=90-p.bla,dx=p.dlo+180,dy=90-p.dla,bUp=by<=dy;
+$("map").innerHTML=base+`<line x1="${bx}" y1="${by}" x2="${dx}" y2="${dy}" stroke="#888" stroke-width=".5" stroke-dasharray="2 1.5"/>`
++lab(bx,by,p.b,"#16a34a",bUp)+lab(dx,dy,p.d,"#dc2626",!bUp)
++`<circle cx="${bx}" cy="${by}" r="1.6" fill="#16a34a" stroke="#fff" stroke-width=".5"/><circle cx="${dx}" cy="${dy}" r="1.6" fill="#dc2626" stroke="#fff" stroke-width=".5"/>`}
+
+// Speed bonus: 1000 during the 3 s map cooldown plus a 2 s grace once answering opens, then drops in tiers (1 point at a time).
+const SEG=[[20,750],[15,500],[10,250],[5,100],[2,0]];
+const sp=t=>{let v=1000,s=t-2;if(s<=0)return 1000;for(const[r,f]of SEG){const d=(v-f)/r;if(s<=d)return Math.floor(v-r*s);s-=d;v=f}return 0};
+function $(id){return document.getElementById(id)}
+const q=$("q"),msg=$("msg");
+const N=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const sg=$("sg");let sel=-1,list=[];
+function sug(){const v=N(q.value);sel=-1;if(!v){sg.hidden=true;return}
+const sc=p=>N(p.n).split(" ").some(w=>w.startsWith(v))?0:1;
+list=pool.filter(p=>N(p.n).includes(v)).sort((a,b)=>sc(a)-sc(b)||a.n.localeCompare(b.n)).slice(0,8);
+sg.innerHTML=list.map((p,k)=>`<div data-k="${k}">${p.n}</div>`).join("");sg.hidden=!list.length}
+function hl(){[...sg.children].forEach((c,k)=>c.className=k===sel?"on":"")}
+q.addEventListener("input",sug);q.addEventListener("blur",()=>sg.hidden=true);
+sg.addEventListener("mousedown",e=>{const k=e.target.dataset.k;e.preventDefault();if(k!=null){q.value=list[k].n;sg.hidden=true}});
+let G,i,cur,t0,state,hint,total,res,timer,pool=D,cn="",tc,wrong=0,hu=0,hs=[1,2],hc=250;
+const COOL=3,cgv=()=>Math.max(0,1000-hc*hu-50*wrong);
+const el=()=>(performance.now()-t0)/1000;
+function stats(){$("rd").textContent=`Person ${i+1} / 5 · ${cn}`;$("tot").textContent=`Total: ${total.toLocaleString("en")} / 10,000`}
+function reset(){const c=CATS[+$("cat").value];cn=c[0];hs=+$("cat").value===0?[0,1,2]:[1,2];hc=hs.length===3?200:250;pool=D.filter(c[1]);G=pool.slice().sort(()=>Math.random()-.5).slice(0,5);i=-1;total=0;res=[];$("end").hidden=true;$("play").hidden=false}
+function start(){reset();next()}
+function init(){reset();state="idle";$("catrow").hidden=false;$("map").innerHTML=base;msg.textContent="Press Start to reveal the first date and place. The timer starts then.";$("nx").hidden=false;$("nx").textContent="Start";$("hint").disabled=$("give").disabled=true;q.disabled=$("go").disabled=true;$("cdw").hidden=true;stats()}
+function next(){i++;if(i>4)return finish();cur=G[i];hint=false;hu=0;wrong=0;$("hints").textContent="";hb();state="cool";$("catrow").hidden=true;q.value="";sg.hidden=true;
+msg.textContent="Study the dates and places. Answering opens when the countdown ends.";
+$("nx").hidden=true;q.disabled=$("go").disabled=$("hint").disabled=$("give").disabled=true;$("cg").textContent=1000;$("sp").textContent=1000;
+draw(cur);$("cdw").hidden=false;$("cd").textContent=COOL;tc=performance.now();clearInterval(timer);timer=setInterval(tick,10);tick();stats()}
+function hb(){$("hint").textContent=`Hint (−${hc}) · ${hs.length-hu} left`}
+function tick(){if(state==="cool"){const e=(performance.now()-tc)/1000;if(e<COOL){$("cd").textContent=Math.ceil(COOL-e);return}
+state="play";t0=tc+COOL*1000;$("cdw").hidden=true;q.disabled=$("go").disabled=$("hint").disabled=$("give").disabled=false;msg.textContent="Who is this?";q.focus()}
+if(state==="play")$("sp").textContent=Math.floor(sp(el()))}
+function fin(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.n,p]);msg.textContent=t;
+$("nx").hidden=false;$("nx").textContent=i<4?"Next person":"See results";$("hint").disabled=$("give").disabled=true;stats()}
+function guess(){sg.hidden=true;if(state!=="play")return;const m=pool.find(p=>N(p.n)===N(q.value));
+if(!m){msg.textContent="Pick a name from the list.";return}
+if(m!==cur){wrong++;q.value="";$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
+const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${cur.n}: ${b} + ${s} speed = ${b+s} points`)}
+function finish(){$("play").hidden=true;$("end").hidden=false;
+$("end").innerHTML=`<div class="big">${total.toLocaleString("en")} / 10,000</div><table>${res.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><div class="row"><button id="again">Play again</button></div>`;
+$("again").onclick=init}
+$("go").onclick=guess;q.addEventListener("keydown",e=>{const o=!sg.hidden&&list.length;
+if(e.key==="ArrowDown"&&o){e.preventDefault();sel=(sel+1)%list.length;hl()}
+else if(e.key==="ArrowUp"&&o){e.preventDefault();sel=(sel+list.length-1)%list.length;hl()}
+else if(e.key==="Escape")sg.hidden=true;
+else if(e.key==="Enter"){if(o&&sel>=0){q.value=list[sel].n;sg.hidden=true}else guess()}});
+$("hint").onclick=()=>{if(state!=="play"||hu>=hs.length)return;hu++;$("hints").textContent="Hints: "+hs.slice(0,hu).map(k=>cur.h[k]).join(" · ");$("cg").textContent=cgv();hb();if(hu>=hs.length)$("hint").disabled=true;msg.textContent="Hint used: correct guess now worth "+cgv()};
+$("give").onclick=()=>{if(state==="play")fin(0,"It was "+cur.n+" (0 points)")};
+$("nx").onclick=()=>{if(state==="idle")reset();next()};
+const TH=[["auto","Auto (system)"],["light","Light"],["dark","Dark"],["parchment","Parchment"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["neon","Neon"]];
+$("theme").innerHTML=TH.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join("");
+function setTh(v){if(v==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=v;$("theme").value=v}
+$("theme").onchange=e=>{setTh(e.target.value);try{localStorage.setItem("th",e.target.value)}catch(x){}};
+try{const v=localStorage.getItem("th");if(v&&TH.some(t=>t[0]===v))setTh(v)}catch(x){}
+init();
+</script></body></html>
