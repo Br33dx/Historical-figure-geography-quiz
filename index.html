@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quiz Hub: history and geography games</title>
+<title>Mapzino · Quiz games</title>
+<script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <style>
 :root{--bg:#f1f3fb;--fg:#1a1d3a;--sea:#cfe0f5;--land:#fff;--ln:#8a93c0;--card:#fff;--ac:#4f46e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1d3a;--fg:#eef0ff;--sea:#243066;--land:#e8ecf5;--ln:#6b74a8;--card:#252a52}}
 :root[data-theme="dark"]{--bg:#1a1d3a;--fg:#eef0ff;--sea:#243066;--land:#e8ecf5;--ln:#6b74a8;--card:#252a52}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}#theme{flex:0 0 auto;padding:6px 10px}
 :root[data-theme="parchment"]{--bg:#f4ead5;--fg:#3b2a1a;--sea:#c9d8d2;--land:#f7efd9;--ln:#8b6b3d;--card:#fbf5e6;--ac:#8b5a2b}
-:root[data-theme="ocean"]{--bg:#0b2545;--fg:#e6f1ff;--sea:#13315c;--land:#8da9c4;--ln:#4a6a94;--card:#134074;--ac:#1e88e5}
+:root[data-theme="rose"]{--bg:#fff0f3;--fg:#4a1424;--sea:#ffd0dc;--land:#ffffff;--ln:#c9798f;--card:#ffffff;--ac:#d6336c}
 :root[data-theme="forest"]{--bg:#12261b;--fg:#e8f5e9;--sea:#1b3a2a;--land:#a9cba3;--ln:#4f7a5c;--card:#1d3a2a;--ac:#2e9e5b}
 :root[data-theme="sunset"]{--bg:#2b1b2e;--fg:#ffeede;--sea:#4a2a52;--land:#f4c7a1;--ln:#a2587a;--card:#3a2540;--ac:#e4572e}
 :root[data-theme="neon"]{--bg:#0d0221;--fg:#f2e9ff;--sea:#150537;--land:#3a2a8c;--ln:#ff2e97;--card:#1b0b44;--ac:#ff2e97}
+:root[data-theme="mono"]{--bg:#ffffff;--fg:#000000;--sea:#d4d4d4;--land:#ffffff;--ln:#222222;--card:#f3f3f3;--ac:#000000}
 .mw{position:relative}.cdw{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.72);color:#fff;padding:8px 16px;border-radius:999px;font-weight:600}.cdw b{font-size:1.4rem;font-variant-numeric:tabular-nums}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -40,19 +42,30 @@ select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px s
 .card:hover{border-color:var(--ac);transform:translateY(-2px)}
 .card h2{margin:0 0 6px;font-size:1.25rem}.card p{margin:0;opacity:.8}
 .soon{opacity:.55;border-style:dashed}
+.fb{margin:22px 0 6px;padding:14px 16px;border:1px dashed var(--ln);border-radius:12px}.fb h2{margin:0 0 6px;font-size:1.1rem}.fb p{margin:0 0 10px}
+.fb a.btn{display:inline-block;background:var(--ac);color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:8px}
+.ft{margin:18px 0 6px;font-size:.85rem;opacity:.75;text-align:center}.ft a{color:var(--fg)}
 </style></head>
 <body><main>
-<div class="top"><h1>Quiz Hub</h1><select id="theme" aria-label="Color scheme"></select></div>
-<p>Pick a game. Each one has 5 rounds and up to 10,000 points.</p>
+<div class="top"><h1>Mapzino</h1><select id="theme" aria-label="Color scheme"></select></div>
+<p>Free map quiz games. Pick a game. Each one has 5 rounds and up to 10,000 points.</p>
 <div class="cards">
 <a class="card" href="history.html"><h2>🗺️ Where &amp; When?</h2><p>Guess famous people from the places and dates of their birth and death on a world map. 240 people, 18 lists.</p></a>
-<a class="card" href="countries.html"><h2>🧭 Which Country?</h2><p>Guess the mystery country from the compass directions to other countries and their flags. 193 countries.</p></a>
-<div class="card soon"><h2>🏙️ Which City?</h2><p>Coming soon: the same idea with capitals and big cities.</p></div>
+<a class="card" href="countries.html"><h2>🧭 Which Country?</h2><p>Guess the mystery country from the compass directions to other countries and their flags. 194 countries.</p></a>
+<a class="card" href="cities.html"><h2>🏙️ Which City?</h2><p>The same idea with 184 cities from around the world: guess the mystery city from the directions to other cities.</p></a>
+<a class="card" href="states.html"><h2>🇺🇸 Which US State?</h2><p>Guess the mystery state from the directions to other states. All 50 states plus Washington, D.C.</p></a>
+
 </div>
+<div class="fb"><h2>💬 Feedback</h2><p>Found a bug, a wrong fact or an arrow that points the wrong way? Have an idea for a new quiz? I read every message.</p><a class="btn" href="#" id="fb">Send feedback</a> <span style="opacity:.8">or write to <b>feedback@mapzino.com</b></span></div>
+<p class="ft"><a href="privacy.html">Privacy</a> · <a href="#" id="fb2">Contact</a> · © Mapzino</p>
 </main>
 <script>
 function $(id){return document.getElementById(id)}
-const TH=[["auto","Auto (system)"],["light","Light"],["dark","Dark"],["parchment","Parchment"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["neon","Neon"]];
+const FB_MAIL="feedback@mapzino.com";
+function fbOpen(game,ctx){const body="What happened, or your idea:\n\n\n\n---\nPlease keep the lines below, they help me find the problem.\nGame: "+game+"\n"+ctx+"\nBrowser: "+navigator.userAgent;
+location.href="mailto:"+FB_MAIL+"?subject="+encodeURIComponent("Mapzino feedback: "+game)+"&body="+encodeURIComponent(body)}
+$("fb").onclick=$("fb2").onclick=e=>{e.preventDefault();fbOpen("Quiz hub","Page: home")};
+const TH=[["auto","Auto (system)"],["light","Light"],["dark","Dark"],["parchment","Parchment"],["rose","Rose"],["forest","Forest"],["sunset","Sunset"],["neon","Neon"],["mono","Mono"]];
 $("theme").innerHTML=TH.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join("");
 function setTh(v){if(v==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=v;$("theme").value=v}
 $("theme").onchange=e=>{setTh(e.target.value);try{localStorage.setItem("th",e.target.value)}catch(x){}};
