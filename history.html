@@ -342,12 +342,12 @@ try{const d=topoD(Datamap.prototype.worldTopo);if(d.length>2000)land=`<path id="
 if(!land)land=L.map(s=>`<polygon points="${P(s)}" fill="var(--land)" stroke="var(--ln)" stroke-width=".4"/>`).join("");
 const base=`<rect width="360" height="150" fill="var(--sea)"/>`+land;
 
-function lab(x,y,t,c,up){const w=t.length*2.5+4,h=6.5;const rx=Math.min(Math.max(x-w/2,1),359-w);let ry=up?y-h-5:y+5;ry=Math.min(Math.max(ry,1),149-h);
-return `<line x1="${x}" y1="${y}" x2="${rx+w/2}" y2="${up?ry+h:ry}" stroke="${c}" stroke-width=".6"/><rect x="${rx}" y="${ry}" width="${w}" height="${h}" rx="1" fill="${c}"/><text x="${rx+w/2}" y="${ry+4.6}" font-size="4.2" fill="#fff" text-anchor="middle" font-weight="600">${t}</text>`}
+function lab(x,y,t,c,up){const sc=($("map").clientWidth||360)/360,fs=Math.max(4.2,12.5/sc),w=t.length*fs*.58+fs*1.1,h=fs*1.6,gap=fs*1.2;const rx=Math.min(Math.max(x-w/2,1),359-w);let ry=up?y-h-gap:y+gap;ry=Math.min(Math.max(ry,1),149-h);
+return `<line x1="${x}" y1="${y}" x2="${rx+w/2}" y2="${up?ry+h:ry}" stroke="${c}" stroke-width="${Math.max(.6,1.3/sc).toFixed(2)}"/><rect x="${rx}" y="${ry}" width="${w}" height="${h}" rx="${(fs*.25).toFixed(2)}" fill="${c}"/><text x="${rx+w/2}" y="${ry+h*.71}" font-size="${fs.toFixed(2)}" fill="#fff" text-anchor="middle" font-weight="700">${t}</text>`}
 function draw(p){const bx=p.blo+180,by=90-p.bla,dx=p.dlo+180,dy=90-p.dla,bUp=by<=dy;
 $("map").innerHTML=base+`<line x1="${bx}" y1="${by}" x2="${dx}" y2="${dy}" stroke="#888" stroke-width=".5" stroke-dasharray="2 1.5"/>`
 +lab(bx,by,p.b,"#16a34a",bUp)+lab(dx,dy,p.d,"#dc2626",!bUp)
-+`<circle cx="${bx}" cy="${by}" r="1.6" fill="#16a34a" stroke="#fff" stroke-width=".5"/><circle cx="${dx}" cy="${dy}" r="1.6" fill="#dc2626" stroke="#fff" stroke-width=".5"/>`}
++`<circle cx="${bx}" cy="${by}" r="${Math.max(1.6,3/(($("map").clientWidth||360)/360)).toFixed(2)}" fill="#16a34a" stroke="#fff" stroke-width=".7"/><circle cx="${dx}" cy="${dy}" r="${Math.max(1.6,3/(($("map").clientWidth||360)/360)).toFixed(2)}" fill="#dc2626" stroke="#fff" stroke-width=".7"/>`}
 
 // Speed bonus: stays at 1000 for the first 5 seconds after the dates and places appear, then drops in tiers (1 point at a time).
 const SEG=[[20,750],[15,500],[10,250],[5,100],[2,0]];
@@ -395,7 +395,7 @@ else if(e.key==="Escape")sg.hidden=true;
 else if(e.key==="Enter"){if(o&&sel>=0){q.value=list[sel].n;sg.hidden=true}else guess()}});
 $("hint").onclick=()=>{if(state!=="play"||hu>=hs.length)return;hu++;$("hints").textContent="Hints: "+hs.slice(0,hu).map(k=>cur.h[k]).join(" · ");$("cg").textContent=cgv();hb();if(hu>=hs.length)$("hint").disabled=true;msg.textContent="Hint used: correct guess now worth "+cgv()};
 $("give").onclick=()=>{if(state==="play")fin(0,"It was "+cur.n+" (0 points)")};
-$("nx").onclick=next;$("start").onclick=()=>{reset();next()};
+$("nx").onclick=next;addEventListener("resize",()=>{if(cur&&state!=="idle")draw(cur)});$("start").onclick=()=>{reset();next()};
 const FB_MAIL="feedback@mapzino.com";
 function fbOpen(game,ctx){const body="What happened, or your idea:\n\n\n\n---\nPlease keep the lines below, they help me find the problem.\nGame: "+game+"\n"+ctx+"\nBrowser: "+navigator.userAgent;
 location.href="mailto:"+FB_MAIL+"?subject="+encodeURIComponent("Mapzino feedback: "+game)+"&body="+encodeURIComponent(body)}

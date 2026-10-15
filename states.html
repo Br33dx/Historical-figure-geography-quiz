@@ -48,11 +48,12 @@ select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px s
 .dg{position:relative;width:100%;max-width:700px;margin:8px auto;aspect-ratio:600/440;background:var(--sea);border:1px solid var(--ln);border-radius:12px}
 .dg svg{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
 #fl{position:absolute;inset:0}
-.fl{position:absolute;transform:translate(-50%,-38%);text-align:center;width:22%}
+.fl{position:absolute;transform:translate(-50%,-50%);text-align:center;width:32%}
 .fl img{max-width:clamp(44px,12vw,84px);max-height:clamp(30px,8vw,56px);width:auto;height:auto;border:1px solid var(--ln);border-radius:2px;display:block;margin:0 auto;background:var(--card)}
-.fl span{display:block;font-size:clamp(10px,2.4vw,14px);font-weight:600;line-height:1.1;margin-top:2px}
+.fl span{display:block;font-size:clamp(13px,3.4vw,19px);font-weight:700;line-height:1.1}
 .ct{overflow:visible;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18%;text-align:center;font-weight:700;font-size:clamp(12px,3.2vw,22px);line-height:1.1}
 .ct img{max-width:92%;max-height:clamp(34px,8vw,60px);width:auto;height:auto;display:block;margin:0 auto 3px;border:1px solid var(--ln);border-radius:2px}
+#sl{pointer-events:none}#sl *{vector-effect:non-scaling-stroke}
 .ft{margin:18px 0 6px;font-size:.85rem;opacity:.75;text-align:center}.ft a{color:var(--fg)}
 </style><script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -60,7 +61,7 @@ select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px s
 <div class="top"><div><a class="back" href="index.html">← All quizzes</a><h1>Which US State?</h1></div><select id="theme" aria-label="Color scheme"></select></div>
 <div class="bar"><span id="rd"></span><span id="tot"></span></div>
 <div class="lg">Each arrow points from the mystery state toward the state shown.</div>
-<div class="dg"><svg id="sv" viewBox="0 0 600 440"></svg><div id="fl"></div><div class="ct" id="ct">State<br>?</div>
+<div class="dg"><svg id="sl" viewBox="0 0 600 440" preserveAspectRatio="none" aria-hidden="true"></svg><svg id="sv" viewBox="0 0 600 440"></svg><div id="fl"></div><div class="ct" id="ct">State<br>?</div>
 <div id="st" class="st"><div class="stb"><select id="cat" aria-label="Choose a list"></select><button id="start" class="bigb">Start</button></div></div></div>
 <div id="play">
 <div class="box">Speed bonus: <span class="big" id="sp">1000</span> &nbsp; Correct guess: <span class="big" id="cg">1000</span></div>
@@ -132,19 +133,19 @@ const psi=l=>Math.log(Math.tan(Math.PI/4+l*rad/2));
 // Direction as seen on a standard world map centred on 0 degrees (no wrapping over the date line), clockwise from north
 function brg(a,b){const d=b.lo-a.lo;return(Math.atan2(d*rad,psi(b.la)-psi(a.la))/rad+360)%360}
 function dist(a,b){const x=Math.sin((b.la-a.la)*rad/2)**2+Math.cos(a.la*rad)*Math.cos(b.la*rad)*Math.sin((b.lo-a.lo)*rad/2)**2;return 12742*Math.asin(Math.sqrt(x))}
-const pos=(b,t=1)=>{const s=Math.sin(b*rad),c=Math.cos(b*rad),r=t/Math.sqrt((s/215)**2+(c/165)**2);return{x:300+r*s,y:220-r*c,s,c,r}};
-const clash=(a,ta,b,tb)=>{const p=pos(a,ta),q=pos(b,tb);return Math.abs(p.x-q.x)<78&&Math.abs(p.y-q.y)<74};
+const pos=(b,t=1)=>{const s=Math.sin(b*rad),c=Math.cos(b*rad),r=t/Math.sqrt((s/190)**2+(c/135)**2);return{x:300+r*s,y:220-r*c,s,c,r}};
+const clash=(a,ta,b,tb)=>{const p=pos(a,ta),q=pos(b,tb);return Math.abs(p.x-q.x)<120&&Math.abs(p.y-q.y)<44};
 const ad=(x,y)=>{const d=Math.abs(x-y)%360;return d>180?360-d:d};
 const shuf=a=>a.slice().sort(()=>Math.random()-.5),rnd=a=>a[Math.floor(Math.random()*a.length)];
 // 1 close neighbour, 2 somewhat close, 2 far (well-known) + 1 extra far arrow for the hint
 function build(M){
 const o=U.filter(c=>c!==M).map(c=>({c,d:dist(M,c),b:brg(M,c)})).filter(x=>x.d>=150).sort((p,q)=>p.d-q.d);
-const m=o.filter(x=>Math.abs(x.c.lo-M.lo)<=180),kn=o.filter(x=>x.c.k),fa=kn.filter(x=>x.d>3500),far=fa.length>=6?fa:kn.slice(-20),tw=U.filter(c=>c!==M&&dist(M,c)<150);
+const m=o.filter(x=>Math.abs(x.c.lo-M.lo)<=180),kn=o.filter(x=>x.c.k),fa=kn.filter(x=>x.d>3500),far=fa.length>=6?fa:kn.slice(-20),near=kn.slice(0,16),tw=U.filter(c=>c!==M&&dist(M,c)<150);
 for(const k of[5,4,3])for(const[sp,tol]of[[20,14],[14,10],[10,7],[7,5],[5,3]])for(let t=0;t<250;t++){const L=[];
 // each flag sits on the outer ring, or on a slightly inner ring when the outer spot is taken
-const add=(p,mm)=>{p=shuf(p.filter(x=>!L.includes(x)&&L.every(y=>ad(x.b,y.b)>=mm)));for(const x of p)for(const r of[1,.74]){if(pos(x.b,r).r<150)continue;if(L.every(y=>!clash(x.b,r,y.b,y.t))){x.t=r;L.push(x);return true}}return false};
-const plan=[[m.slice(0,4),sp],...Array(k===5?2:1).fill([m.slice(4,30),sp]),...Array(k===3?1:2).fill([far,sp]),[far,sp-6]];
-if(!plan.every(([p,a])=>add(p,a)))continue;
+const add=(p,mm,ns)=>{p=p.filter(x=>!L.includes(x)&&L.every(y=>ad(x.b,y.b)>=mm));if(!ns)p=shuf(p);for(const x of p)for(const r of[1,.74]){if(pos(x.b,r).r<105)continue;if(L.every(y=>!clash(x.b,r,y.b,y.t))){x.t=r;L.push(x);return true}}return false};
+const plan=[[m.slice(0,4),sp],...Array(k===5?2:1).fill([m.slice(4,30),sp]),...Array(k===3?1:2).fill([far,sp]),[near,sp-6]];
+if(!plan.every(([p,a],j)=>j===plan.length-1?(add(near,8)||add(kn,8,1)||add(far,a)):add(p,a)))continue;
 const sel=L.slice(0,-1);
 if(!U.some(c=>c!==M&&!tw.includes(c)&&!sel.some(x=>x.c===c)&&sel.every(x=>ad(brg(c,x.c),x.b)<tol)))return{r:L,tw}}
 return null}
@@ -158,15 +159,37 @@ const SEG=[[20,750],[15,500],[10,250],[5,100],[2,0]];
 const sp=t=>{let v=1000,s=t-2;if(s<=0)return 1000;for(const[r,f]of SEG){const d=(v-f)/r;if(s<=d)return Math.floor(v-r*s);s-=d;v=f}return 0};
 function $(id){return document.getElementById(id)}
 const q=$("q"),msg=$("msg"),sg=$("sg");
+// ---- decorative background silhouette (world, or the USA for the states game) ----
+const SILKIND="usa";
+const WP=["-168,66 -162,70 -150,71 -125,70 -95,72 -82,69 -62,60 -56,52 -66,45 -70,42 -76,35 -81,30 -80,25 -84,30 -90,29 -97,26 -97,20 -88,16 -83,10 -77,8 -80,7 -86,11 -92,14 -105,20 -110,24 -114,31 -117,32 -124,40 -124,48 -130,55 -140,60 -150,60 -158,57 -165,60", "-77,8 -72,12 -62,10 -52,5 -50,0 -35,-5 -39,-14 -41,-22 -48,-26 -58,-35 -65,-41 -68,-52 -72,-54 -74,-45 -71,-30 -70,-18 -76,-14 -81,-5 -80,0", "-55,60 -45,60 -20,70 -20,82 -60,82 -72,78 -58,70", "-9,37 -9,43 -2,44 -5,48 2,51 8,54 8,57 10,57 5,59 5,62 15,69 25,71 40,68 44,68 60,69 70,73 100,77 112,74 140,72 160,70 180,69 180,65 165,60 156,51 143,59 137,54 141,48 132,43 129,35 126,35 125,38 121,40 118,38 122,37 122,31 120,26 110,21 108,17 106,10 103,10 100,13 100,7 103,1 98,8 98,16 94,17 92,22 87,21 80,15 78,8 73,16 72,21 67,25 57,25 56,27 50,30 48,29 51,25 56,24 59,22 55,17 44,13 39,21 35,28 34,31 36,36 27,37 26,40 24,38 21,37 19,42 13,45 18,40 16,38 12,42 8,44 3,43 0,39 -5,36", "-17,21 -10,30 -6,36 10,37 11,33 20,31 32,31 35,28 43,12 51,12 40,-3 40,-15 35,-24 32,-29 20,-35 18,-32 12,-17 14,-10 9,-1 9,4 -8,4 -17,14", "114,-22 122,-18 130,-12 136,-12 142,-11 146,-19 153,-26 150,-37 141,-38 135,-35 131,-31 115,-34", "-5,50 1,51 2,53 -2,56 -3,58 -6,58 -5,55 -3,54 -5,52", "130,31 135,34 140,36 142,40 141,45 139,40 135,35 131,34", "44,-25 47,-25 50,-15 49,-12 44,-17", "95,5 106,-6 104,-6 98,0", "109,1 117,7 119,1 116,-4 110,-3", "131,-1 141,-3 150,-10 141,-9 132,-3", "172,-35 178,-38 174,-42 168,-47 167,-45", "-24,64 -14,64 -14,66 -22,66", "-85,22 -74,20 -78,22"],USP="-124.7,48.4 -122.8,49 -95.2,49 -94.6,48.7 -91,48.2 -89.5,48 -90.4,47 -88.5,47.4 -87,46.5 -84.6,46.5 -84.7,45.8 -83.4,45.3 -83.9,43.7 -82.4,43 -83.1,42.1 -82.7,41.7 -80.5,42 -79,42.8 -79.2,43.4 -76.3,43.5 -75,44.9 -71.5,45 -70.8,45.4 -70,46.7 -69.2,47.4 -67.8,47.1 -67.8,45.7 -67,44.8 -68.5,44.3 -70.2,43.6 -70.7,42.9 -70.9,42.5 -70,41.8 -70,41.6 -71.4,41.5 -72.9,41.2 -74,40.7 -74,40.2 -74.9,38.9 -75.1,38.4 -75.9,37.1 -76,36.9 -75.5,35.3 -76.7,34.7 -77.9,33.9 -79.2,33.2 -80.9,32 -81.3,30.7 -81.2,29.8 -80.5,28.4 -80,26.8 -80.1,25.8 -80.4,25.2 -81.1,25.1 -81.8,26.1 -82.7,27.6 -82.8,29 -83.7,29.9 -84.3,30 -85.4,29.7 -86.5,30.4 -88,30.3 -89.4,30.2 -89.2,29 -90.3,29.2 -91.8,29.5 -93.8,29.7 -94.8,29.3 -96.5,28.3 -97.4,27.2 -97.2,25.9 -99.1,26.4 -99.5,27.5 -100.7,29.1 -101.4,29.8 -102.4,29.8 -103.1,29 -104.5,29.6 -106.5,31.8 -108.2,31.8 -108.2,31.3 -111.1,31.3 -114.8,32.5 -117.1,32.5 -117.3,33.2 -118.4,33.7 -118.5,34 -119.3,34.1 -120.6,34.5 -121.9,36.6 -122.5,37.8 -123,38.3 -123.8,39.4 -124.4,40.4 -124.1,41.8 -124.5,42.8 -124.1,44 -123.9,46.2 -124.1,46.9";
+const sPts=s=>s.split(" ").map(p=>{const[a,b]=p.split(",");return(+a+180)+","+(90-b)}).join(" ");
+const SILT=SILKIND==="usa"?"translate(-481.2 -394.8) scale(9.3 11.6)":"translate(0 61) scale(1.6667 2)";
+const silDraw=g=>{$("sl").innerHTML=`<g fill="var(--fg)" stroke="var(--fg)" stroke-width=".8" stroke-linejoin="round" opacity=".1" transform="${SILT}">${g}</g>`};
+function topoD(t,skip){const tr=t.transform,k=tr?tr.scale:[1,1],o=tr?tr.translate:[0,0];
+const A=t.arcs.map(a=>{let x=0,y=0;return a.map(p=>{if(tr){x+=p[0];y+=p[1]}else{x=p[0];y=p[1]}return[+(x*k[0]+o[0]+180).toFixed(2),+(90-(y*k[1]+o[1])).toFixed(2)]})});
+const ring=r=>{let pts=[];r.forEach(i=>{const a=i<0?A[~i].slice().reverse():A[i];pts=pts.concat(pts.length?a.slice(1):a)});let off=0;pts=pts.map((p,j)=>{if(j){const d=p[0]-pts[j-1][0];if(d>180)off-=360;else if(d<-180)off+=360}return[+(p[0]+off).toFixed(2),p[1]]});return"M"+pts.map(p=>p.join(",")).join("L")+"Z"};
+const poly=p=>p.map(ring).join("");
+return Object.values(t.objects)[0].geometries.filter(g=>!skip.includes(g.id)).map(g=>g.type==="Polygon"?poly(g.arcs):g.type==="MultiPolygon"?g.arcs.map(poly).join(""):"").join("")}
+const loadJs=u=>new Promise((r,j)=>{const s=document.createElement("script");s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)});
+// the fast hand-drawn outline is shown straight away; real borders replace it once the map library has loaded
+async function upgradeSil(){try{await loadJs("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js");await loadJs("https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.all.min.js");
+const usa=SILKIND==="usa",d=topoD(usa?Datamap.prototype.usaTopo:Datamap.prototype.worldTopo,usa?["AK","HI"]:["ATA"]);
+if(d.length<2000)return;
+if(usa){const n=d.match(/-?\d+\.?\d*/g).map(Number);let a=1e9,b=-1e9,e=1e9,f=-1e9;for(let i=0;i+1<n.length;i+=2){a=Math.min(a,n[i]);b=Math.max(b,n[i]);e=Math.min(e,n[i+1]);f=Math.max(f,n[i+1])}if(a<40||b>135||e<30||f>75)return}
+silDraw(usa?`<path d="${d}"/>`:`<path id="SLD" d="${d}"/><use href="#SLD" x="-360"/><use href="#SLD" x="360"/>`)}catch(e){}}
+silDraw((SILKIND==="usa"?[USP]:WP).map(s=>`<polygon points="${sPts(s)}"/>`).join(""));
+addEventListener("load",()=>setTimeout(upgradeSil,700));
+
 $("cat").innerHTML=CATS.map((c,k)=>`<option value="${k}">${c[0]} (${C.filter(c[1]).length})</option>`).join("");
 const N=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const FL={};
 const img=i=>FL[i]?`<img alt="${i.toUpperCase()}" src="${FL[i]}">`:"";
 let G,i,cur,t0,state,hu=0,wrong=0,total,res,pool=C,cn="",hs=["c","x"],ex=false,timer,list=[],sel=-1;
 const cgv=()=>Math.max(0,1000-250*hu-50*wrong),el=()=>(performance.now()-t0)/1000;
+const eo=(x,p)=>{const hx=Math.min(x.c.n.length*6.5,96),hy=15;return Math.min(hx/Math.max(Math.abs(p.s),.01),hy/Math.max(Math.abs(p.c),.01))+9};
 function show(){const n=cur.r.length-1+(ex?1:0);let sv="",fl="";
 cur.r.slice(0,n).forEach(x=>{const p=pos(x.b,x.t);
-sv+=`<line x1="${300+62*p.s}" y1="${220-62*p.c}" x2="${300+(p.r-62)*p.s}" y2="${220-(p.r-62)*p.c}" stroke="var(--fg)" stroke-width="3" marker-end="url(#ah)"/>`;
+sv+=`<line x1="${300+62*p.s}" y1="${220-62*p.c}" x2="${300+(p.r-eo(x,p))*p.s}" y2="${220-(p.r-eo(x,p))*p.c}" stroke="var(--fg)" stroke-width="3" marker-end="url(#ah)"/>`;
 fl+=`<div class="fl" style="left:${p.x/6}%;top:${p.y/4.4}%">${img(x.c.i)}<span>${x.c.n}</span></div>`});
 $("sv").innerHTML=`<defs><marker id="ah" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0L6,3L0,6z" fill="var(--fg)"/></marker></defs><circle cx="300" cy="220" r="58" fill="var(--card)" stroke="var(--ln)" stroke-width="2"/>`+sv;$("fl").innerHTML=fl}
 function stats(){$("rd").textContent=`State ${i+1} / 5 · ${cn}`;$("tot").textContent=`Total: ${total.toLocaleString("en")} / 10,000`}
