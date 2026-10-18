@@ -126,7 +126,7 @@ Virginia|va|37.5|-78.8|S
 Washington|wa|47.4|-120.5|W
 West Virginia|wv|38.6|-80.6|s
 Wisconsin|wi|44.6|-89.9|m
-Wyoming|wy|43.0|-107.5|w`.trim().split("\n").map(l=>{const a=l.split("|");return{n:a[0],i:a[1],la:+a[2],lo:+a[3],c:a[4].toUpperCase(),k:a[4]===a[4].toUpperCase(),sp:a[0]==="Vatican City"}});
+Wyoming|wy|43.0|-107.5|w`.trim().split("\n").map(l=>{const a=l.split("|");return{a:[a[0]],n:a[0],i:a[1],la:+a[2],lo:+a[3],c:a[4].toUpperCase(),k:a[4]===a[4].toUpperCase(),sp:a[0]==="Vatican City"}});
 const U=C.filter(c=>!c.sp);
 const CN={N:"Northeast",M:"Midwest",S:"South",W:"West"},rad=Math.PI/180;
 const psi=l=>Math.log(Math.tan(Math.PI/4+l*rad/2));
@@ -156,7 +156,8 @@ function special(m){const z=C.find(c=>c.n===SP[m.n]);let L;for(let t=0;t<300;t++
 L=Array.from({length:6},(_,k)=>({c:z,b:(o+k*60+Math.random()*30-15+360)%360,t:1}));
 if(L.every((x,i)=>L.every((y,j)=>j<=i||(ad(x.b,y.b)>=30&&!clash(x.b,1,y.b,1)))))break}return{m,r:L,tw:[],sp:1}}
 const SEG=[[20,750],[15,500],[10,250],[5,100],[2,0]];
-const sp=t=>{let v=1000,s=t-2;if(s<=0)return 1000;for(const[r,f]of SEG){const d=(v-f)/r;if(s<=d)return Math.floor(v-r*s);s-=d;v=f}return 0};
+const GRACE=5;
+const sp=t=>{let v=1000,s=t-GRACE;if(s<=0)return 1000;for(const[r,f]of SEG){const d=(v-f)/r;if(s<=d)return Math.floor(v-r*s);s-=d;v=f}return 0};
 function $(id){return document.getElementById(id)}
 const q=$("q"),msg=$("msg"),sg=$("sg");
 // ---- decorative background silhouette (world, or the USA for the states game) ----
@@ -184,8 +185,9 @@ $("cat").innerHTML=CATS.map((c,k)=>`<option value="${k}">${c[0]} (${C.filter(c[1
 const N=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const FL={};
 const img=i=>FL[i]?`<img alt="${i.toUpperCase()}" src="${FL[i]}">`:"";
-let G,i,cur,t0,state,hu=0,wrong=0,total,res,pool=C,cn="",hs=["c","x"],ex=false,timer,list=[],sel=-1;
-const cgv=()=>Math.max(0,1000-250*hu-50*wrong),el=()=>(performance.now()-t0)/1000;
+let G,i,cur,t0,state,hu=0,wrong=0,total,res,pool=C,cn="",hs=["c","x"],hc=250,ex=false,timer,list=[],sel=-1,E=[];
+const TY={};
+const cgv=()=>Math.max(0,1000-hc*hu-50*wrong),el=()=>(performance.now()-t0)/1000;
 const eo=(x,p)=>{const hx=Math.min(x.c.n.length*6.5,96),hy=15;return Math.min(hx/Math.max(Math.abs(p.s),.01),hy/Math.max(Math.abs(p.c),.01))+9};
 function show(){const n=cur.r.length-1+(ex?1:0);let sv="",fl="";
 cur.r.slice(0,n).forEach(x=>{const p=pos(x.b,x.t);
@@ -193,31 +195,33 @@ sv+=`<line x1="${300+62*p.s}" y1="${220-62*p.c}" x2="${300+(p.r-eo(x,p))*p.s}" y
 fl+=`<div class="fl" style="left:${p.x/6}%;top:${p.y/4.4}%">${img(x.c.i)}<span>${x.c.n}</span></div>`});
 $("sv").innerHTML=`<defs><marker id="ah" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0L6,3L0,6z" fill="var(--fg)"/></marker></defs><circle cx="300" cy="220" r="58" fill="var(--card)" stroke="var(--ln)" stroke-width="2"/>`+sv;$("fl").innerHTML=fl}
 function stats(){$("rd").textContent=`State ${i+1} / 5 · ${cn}`;$("tot").textContent=`Total: ${total.toLocaleString("en")} / 10,000`}
-function hb(){$("hint").textContent=`Hint (−250) · ${hs.length-hu} left`}
-function reset(){const c=CATS[+$("cat").value];cn=c[0];pool=C.filter(c[1]);hs=c[2]?["c","x"]:["x"];$("end").hidden=true;$("play").hidden=false;total=0;res=[];i=-1;G=[];
+function hb(){$("hint").textContent=`Hint (−${hc}) · ${hs.length-hu} left`}
+function reset(){const c=CATS[+$("cat").value];cn=c[0];pool=C.filter(c[1]);E=pool.flatMap(p=>p.a.map(x=>({n:x,it:p})));hs=Array.isArray(c[2])?c[2].slice():c[2]?["c","x"]:["x"];hc=hs.length>=3?200:250;$("end").hidden=true;$("play").hidden=false;total=0;res=[];i=-1;G=[];
 for(const m of shuf(pool.filter(c=>!c.sp))){const r=build(m);if(r)G.push({m,r:r.r,tw:r.tw});if(G.length===5)break}
 const sc=pool.filter(c=>SP[c.n]);if(sc.length&&Math.random()<.05)G[Math.floor(Math.random()*5)]=special(rnd(sc))}
 function init(){reset();state="idle";$("st").hidden=false;$("fl").innerHTML="";$("sv").innerHTML="";$("ct").innerHTML="State<br>?";
-msg.textContent="Choose a list and press Start. Points begin to drop 2 seconds after the arrows appear.";$("hints").textContent="";$("nx").hidden=true;
+msg.textContent="Choose a list and press Start. Points begin to drop 5 seconds after the arrows appear.";$("hints").textContent="";$("nx").hidden=true;
 $("hint").disabled=$("give").disabled=q.disabled=$("go").disabled=true;stats()}
 function next(){i++;if(i>4)return finish();cur=G[i];hu=0;wrong=0;ex=false;state="play";$("st").hidden=true;q.value="";sg.hidden=true;$("hints").textContent="";hb();
 $("ct").innerHTML="State<br>?";msg.textContent="Which state is in the middle?";$("nx").hidden=true;q.disabled=$("go").disabled=$("hint").disabled=$("give").disabled=false;
 $("cg").textContent=1000;$("sp").textContent=1000;show();t0=performance.now();clearInterval(timer);timer=setInterval(tick,10);stats();if(!matchMedia("(pointer:coarse)").matches)q.focus()}
 function tick(){if(state==="play")$("sp").textContent=Math.floor(sp(el()))}
 function nmFit(n){const lw=Math.max(...n.split(" ").map(w=>w.length));let k=Math.min(1,7.5/lw);if(n.length>14)k*=.85;k=Math.max(k,.5);return `<span style="font-size:${k.toFixed(2)}em;display:block;overflow-wrap:anywhere">${n}</span>`}
-function fin(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.m.n,p]);msg.textContent=t+(cur.sp?` Surprise round: ${cur.m.n} is surrounded by ${SP[cur.m.n]}!`:"");$("ct").innerHTML=img(cur.m.i)+nmFit(cur.m.n);
+function fin(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.m.n,p]);msg.textContent=t+(cur.sp?` Surprise round: ${cur.m.n} is surrounded by ${SP[cur.m.n]}!`:"")+(cur.m.a.length>1?" (also accepted: "+cur.m.a.slice(1).join(" / ")+")":"");$("hints").textContent=cur.m.f||"";$("ct").innerHTML=img(cur.m.i)+nmFit(cur.m.n);
 $("nx").hidden=false;$("nx").textContent=i<4?"Next":"See results";$("hint").disabled=$("give").disabled=true;stats()}
-function guess(){sg.hidden=true;if(state!=="play")return;const m=pool.find(p=>N(p.n)===N(q.value));
+function guess(){sg.hidden=true;if(state!=="play")return;const m=(E.find(e=>N(e.n)===N(q.value))||{}).it;
 if(!m){msg.textContent="Pick a state from the list.";return}
-if(m!==cur.m&&!cur.tw.includes(m)){wrong++;q.value="";$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
-const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${m!==cur.m?m.n+" counts too (arrows were drawn from "+cur.m.n+"): ":cur.m.n+": "}${b} + ${s} speed = ${b+s} points`)}
+if(m!==cur.m){q.value="";
+if(dist(m,cur.m)<200){msg.textContent="📍 You are really close! No points lost, try again.";return}
+wrong++;$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
+const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${cur.m.n}: ${b} + ${s} speed = ${b+s} points`)}
 function finish(){$("play").hidden=true;$("end").hidden=false;
 $("end").innerHTML=`<div class="big">${total.toLocaleString("en")} / 10,000</div><table>${res.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><div class="row"><button id="again">Play again</button><button id="shr" class="s">Share my score</button></div>`;$("again").onclick=init;$("shr").onclick=()=>shareScore("Which US State?")}
 function shareScore(game){const t="Mapzino · "+game+": "+total.toLocaleString("en")+" / 10,000. Can you beat me? https://mapzino.com";
 if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("shr").textContent="Copied!"},()=>{prompt("Copy your score:",t)})}}
 
-$("hint").onclick=()=>{if(state!=="play"||hu>=hs.length)return;const h=hs[hu++];
-if(h==="c")$("hints").textContent="Region: "+CN[cur.m.c];else{ex=true;show();$("hints").textContent=($("hints").textContent?$("hints").textContent+" · ":"")+"extra arrow added"}
+$("hint").onclick=()=>{if(state!=="play"||hu>=hs.length)return;const h=hs[hu++],add=s=>$("hints").textContent=($("hints").textContent?$("hints").textContent+" · ":"")+s;
+if(h==="c")add("Region: "+CN[cur.m.c]);else if(h==="t")add("Type: "+TY[cur.m.y]);else{ex=true;show();add("extra arrow added")}
 $("cg").textContent=cgv();hb();if(hu>=hs.length)$("hint").disabled=true;msg.textContent="Hint used: correct guess now worth "+cgv()};
 $("give").onclick=()=>{if(state==="play")fin(0,"It was "+cur.m.n+" (0 points)")};
 $("go").onclick=guess;$("nx").onclick=next;$("start").onclick=()=>{reset();next()};
@@ -225,9 +229,9 @@ const FB_MAIL="feedback@mapzino.com";
 function fbOpen(game,ctx){const body="What happened, or your idea:\n\n\n\n---\nPlease keep the lines below, they help me find the problem.\nGame: "+game+"\n"+ctx+"\nBrowser: "+navigator.userAgent;
 location.href="mailto:"+FB_MAIL+"?subject="+encodeURIComponent("Mapzino feedback: "+game)+"&body="+encodeURIComponent(body)}
 $("fb2").onclick=e=>{e.preventDefault();$("fb").onclick(e)};$("fb").onclick=e=>{e.preventDefault();fbOpen("Which US State?","Mystery state: "+(cur?cur.m.n:"none yet")+"\nArrows shown: "+(cur?cur.r.slice(0,-1).map(x=>x.c.n+" "+Math.round(x.b)+"deg").join(", "):"-")+"\nList: "+cn)};
-function sug(){const v=N(q.value);sel=-1;if(!v){sg.hidden=true;return}const sc=p=>N(p.n).split(" ").some(w=>w.startsWith(v))?0:1;
-list=pool.filter(p=>N(p.n).includes(v)).sort((a,b)=>sc(a)-sc(b)||a.n.localeCompare(b.n)).slice(0,8);
-sg.innerHTML=list.map((p,k)=>`<div data-k="${k}">${p.n}</div>`).join("");sg.hidden=!list.length}
+function sug(){const v=N(q.value);sel=-1;if(!v){sg.hidden=true;return}const sc=p=>N(p.n).split(" ").some(w=>w.startsWith(v))?0:1,seen=new Set();
+list=E.filter(p=>N(p.n).includes(v)).sort((a,b)=>sc(a)-sc(b)||a.n.localeCompare(b.n)).filter(e=>!seen.has(e.it)&&seen.add(e.it)).slice(0,8);
+sg.innerHTML=list.map((p,k)=>`<div data-k="${k}">${p.n}${p.n!==p.it.n?` <small style="opacity:.6">· ${p.it.n}</small>`:""}</div>`).join("");sg.hidden=!list.length}
 const hl=()=>[...sg.children].forEach((c,k)=>c.className=k===sel?"on":"");
 q.addEventListener("input",sug);q.addEventListener("blur",()=>sg.hidden=true);
 sg.addEventListener("mousedown",e=>{const k=e.target.dataset.k;e.preventDefault();if(k!=null){q.value=list[k].n;sg.hidden=true}});
