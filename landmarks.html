@@ -322,12 +322,13 @@ function tick(){if(state==="play")$("sp").textContent=Math.floor(sp(el()))}
 function nmFit(n){const lw=Math.max(...n.split(" ").map(w=>w.length));let k=Math.min(1,7.5/lw);if(n.length>14)k*=.85;k=Math.max(k,.5);return `<span style="font-size:${k.toFixed(2)}em;display:block;overflow-wrap:anywhere">${n}</span>`}
 function fin(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.m.n,p]);msg.textContent=t+(cur.sp?` Surprise round: ${cur.m.n} is surrounded by ${SP[cur.m.n]}!`:"")+(cur.m.a.length>1?" (also accepted: "+cur.m.a.slice(1).join(" / ")+")":"");$("hints").textContent=cur.m.f||"";$("ct").innerHTML=img(cur.m.i)+nmFit(cur.m.n);
 $("nx").hidden=false;$("nx").textContent=i<4?"Next":"See results";$("hint").disabled=$("give").disabled=true;stats()}
+const NEAR=1; // 1 = a wrong guess within 200 km gets a friendly message instead of a penalty (cities, landmarks)
 function guess(){sg.hidden=true;if(state!=="play")return;const m=(E.find(e=>N(e.n)===N(q.value))||{}).it;
 if(!m){msg.textContent="Pick a landmark from the list.";return}
-if(m!==cur.m){q.value="";
-if(dist(m,cur.m)<200){msg.textContent="📍 You are really close! No points lost, try again.";return}
+if(m!==cur.m&&(NEAR||!cur.tw.includes(m))){q.value="";
+if(NEAR&&dist(m,cur.m)<200){msg.textContent="📍 You are really close! No points lost, try again.";return}
 wrong++;$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
-const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${cur.m.n}: ${b} + ${s} speed = ${b+s} points`)}
+const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${m!==cur.m?m.n+" counts too (arrows were drawn from "+cur.m.n+"): ":cur.m.n+": "}${b} + ${s} speed = ${b+s} points`)}
 function finish(){$("play").hidden=true;$("end").hidden=false;
 $("end").innerHTML=`<div class="big">${total.toLocaleString("en")} / 10,000</div><table>${res.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><div class="row"><button id="again">Play again</button><button id="shr" class="s">Share my score</button></div>`;$("again").onclick=init;$("shr").onclick=()=>shareScore("Which Landmark?")}
 function shareScore(game){const t="Mapzino · "+game+": "+total.toLocaleString("en")+" / 10,000. Can you beat me? https://mapzino.com";
