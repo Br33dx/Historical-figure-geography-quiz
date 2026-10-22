@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapzino · Where &amp; When?</title>
+<title>Where &amp; When? · Famous people history map quiz | Mapzino</title><!--SEO--><meta name="description" content="Guess famous people from the places and dates of their birth and death on a world map. 240 people, 18 lists. Free history quiz."><link rel="canonical" href="https://mapzino.com/history.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Mapzino"><meta property="og:title" content="Where &amp; When? · Famous people history map quiz | Mapzino"><meta property="og:description" content="Guess famous people from the places and dates of their birth and death on a world map. 240 people, 18 lists. Free history quiz."><meta property="og:url" content="https://mapzino.com/history.html"><meta property="og:image" content="https://mapzino.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Where &amp; When? · Famous people history map quiz | Mapzino"><meta name="twitter:description" content="Guess famous people from the places and dates of their birth and death on a world map. 240 people, 18 lists. Free history quiz."><meta name="twitter:image" content="https://mapzino.com/og.png"><!--/SEO-->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%8D%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#f1f3fb;--fg:#1a1d3a;--sea:#cfe0f5;--land:#fff;--ln:#8a93c0;--card:#fff;--ac:#4f46e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -46,7 +46,7 @@ table{width:100%;border-collapse:collapse}td{padding:5px 6px;border-bottom:1px s
 .hn{font-size:1.05rem;font-weight:600;min-height:1.4em;margin:4px 0}
 select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--fg)}
 .ft{margin:18px 0 6px;font-size:.85rem;opacity:.75;text-align:center}.ft a{color:var(--fg)}
-</style><script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</style><script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="daily.js"></script>
 </head>
 <body><main>
 <div class="top"><div><a class="back" href="index.html">← All quizzes</a><h1>Where &amp; When? History Map Quiz</h1></div><select id="theme" aria-label="Color scheme"></select></div>
@@ -368,7 +368,7 @@ let G,i,cur,t0,state,hint,total,res,timer,pool=D,cn="",tc,wrong=0,hu=0,hs=[1,2],
 const GRACE=5,cgv=()=>Math.max(0,1000-hc*hu-50*wrong);
 const el=()=>(performance.now()-t0)/1000;
 function stats(){$("rd").textContent=`Person ${i+1} / 5 · ${cn}`;$("tot").textContent=`Total: ${total.toLocaleString("en")} / 10,000`}
-function reset(){const c=CATS[+$("cat").value];cn=c[0];hs=+$("cat").value===0?[0,1,2]:[1,2];hc=hs.length===3?200:250;pool=D.filter(c[1]);G=pool.slice().sort(()=>Math.random()-.5).slice(0,5);i=-1;total=0;res=[];$("end").hidden=true;$("play").hidden=false}
+function reset0(){const c=CATS[+$("cat").value];cn=c[0];hs=+$("cat").value===0?[0,1,2]:[1,2];hc=hs.length===3?200:250;pool=D.filter(c[1]);G=(a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a})(pool).slice(0,5);i=-1;total=0;res=[];$("end").hidden=true;$("play").hidden=false}
 function start(){reset();next()}
 function init(){reset();state="idle";$("st").hidden=false;$("map").innerHTML=base;msg.textContent="Choose a list and press Start. Points begin to drop 5 seconds after the dates and places appear.";$("hints").textContent="";$("nx").hidden=true;$("hint").disabled=$("give").disabled=true;q.disabled=$("go").disabled=true;$("cdw").hidden=true;stats()}
 function next(){i++;if(i>4)return finish();cur=G[i];hint=false;hu=0;wrong=0;$("hints").textContent="";hb();state="play";$("st").hidden=true;q.value="";sg.hidden=true;
@@ -377,13 +377,13 @@ draw(cur);$("cdw").hidden=false;$("cd").textContent=GRACE;t0=performance.now();c
 if(!matchMedia("(pointer:coarse)").matches)q.focus()}
 function hb(){$("hint").textContent=`Hint (−${hc}) · ${hs.length-hu} left`}
 function tick(){if(state!=="play")return;const e=el();if(e<GRACE)$("cd").textContent=Math.ceil(GRACE-e);else $("cdw").hidden=true;$("sp").textContent=Math.floor(sp(e))}
-function fin(p,t){state="done";clearInterval(timer);$("cdw").hidden=true;total+=p;res.push([cur.n,p]);msg.textContent=t;
+function fin0(p,t){state="done";clearInterval(timer);$("cdw").hidden=true;total+=p;res.push([cur.n,p]);msg.textContent=t;
 $("nx").hidden=false;$("nx").textContent=i<4?"Next person":"See results";$("hint").disabled=$("give").disabled=true;stats()}
 function guess(){sg.hidden=true;if(state!=="play")return;const m=pool.find(p=>N(p.n)===N(q.value));
 if(!m){msg.textContent="Pick a name from the list.";return}
 if(m!==cur){wrong++;q.value="";$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
 const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${cur.n}: ${b} + ${s} speed = ${b+s} points`)}
-function finish(){$("play").hidden=true;$("end").hidden=false;
+function finish0(){$("play").hidden=true;$("end").hidden=false;
 $("end").innerHTML=`<div class="big">${total.toLocaleString("en")} / 10,000</div><table>${res.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><div class="row"><button id="again">Play again</button><button id="shr" class="s">Share my score</button></div>`;
 $("again").onclick=init;$("shr").onclick=()=>shareScore("Where & When?")}
 function shareScore(game){const t="Mapzino · "+game+": "+total.toLocaleString("en")+" / 10,000. Can you beat me? https://mapzino.com";
@@ -406,5 +406,13 @@ $("theme").innerHTML=TH.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join(
 function setTh(v){if(v==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=v;$("theme").value=v}
 $("theme").onchange=e=>{setTh(e.target.value);try{localStorage.setItem("th",e.target.value)}catch(x){}};
 try{const v=localStorage.getItem("th");if(v&&TH.some(t=>t[0]===v))setTh(v)}catch(x){}
-init();
+function reset(){if(!MZ.on)return reset0();$("cat").value=0;MZ.seeded(reset0)}
+function fin(p,t){fin0(p,t);if(MZ.on)MZ.progress(total,res)}
+function finish(){finish0();if(MZ.on)MZ.endUI($("end"),total,res)}
+function dailyBoot(){const a=document.querySelector(".back");a.href="daily.html";a.textContent="← Daily challenges";$("cat").hidden=true;
+document.querySelector("h1").textContent+=" · Daily";$("start").textContent="Start today's challenge";
+msg.textContent="Daily challenge "+MZ.DAY+": everyone gets the same 5 puzzles today. One try. Points begin to drop 5 seconds after each puzzle appears.";
+$("start").addEventListener("click",()=>MZ.started());
+const sv=MZ.load();if(sv){$("st").hidden=true;total=sv.t;res=sv.r;finish()}}
+init();if(MZ.on)dailyBoot();
 </script></body></html>

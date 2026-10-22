@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapzino · Which City?</title>
+<title>Which City? · World cities map quiz | Mapzino</title><!--SEO--><meta name="description" content="Guess the mystery city from the directions to other cities. 500 cities: every capital plus the biggest cities on Earth. Free quiz."><link rel="canonical" href="https://mapzino.com/cities.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Mapzino"><meta property="og:title" content="Which City? · World cities map quiz | Mapzino"><meta property="og:description" content="Guess the mystery city from the directions to other cities. 500 cities: every capital plus the biggest cities on Earth. Free quiz."><meta property="og:url" content="https://mapzino.com/cities.html"><meta property="og:image" content="https://mapzino.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Which City? · World cities map quiz | Mapzino"><meta name="twitter:description" content="Guess the mystery city from the directions to other cities. 500 cities: every capital plus the biggest cities on Earth. Free quiz."><meta name="twitter:image" content="https://mapzino.com/og.png"><!--/SEO-->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%8D%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#f1f3fb;--fg:#1a1d3a;--sea:#cfe0f5;--land:#fff;--ln:#8a93c0;--card:#fff;--ac:#4f46e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -56,7 +56,7 @@ select{flex:1 1 260px;padding:10px;font-size:1rem;border-radius:8px;border:1px s
 .ct img{max-width:92%;max-height:clamp(34px,8vw,60px);width:auto;height:auto;display:block;margin:0 auto 3px;border:1px solid var(--ln);border-radius:2px}
 #sl{pointer-events:none}#sl *{vector-effect:non-scaling-stroke}
 .ft{margin:18px 0 6px;font-size:.85rem;opacity:.75;text-align:center}.ft a{color:var(--fg)}
-</style><script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</style><script data-goatcounter="https://br33dx.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="daily.js"></script>
 </head>
 <body><main>
 <div class="top"><div><a class="back" href="index.html">← All quizzes</a><h1>Which City?</h1></div><select id="theme" aria-label="Color scheme"></select></div>
@@ -586,7 +586,7 @@ function dist(a,b){const x=Math.sin((b.la-a.la)*rad/2)**2+Math.cos(a.la*rad)*Mat
 const pos=(b,t=1)=>{const s=Math.sin(b*rad),c=Math.cos(b*rad),r=t/Math.sqrt((s/215)**2+(c/165)**2);return{x:300+r*s,y:220-r*c,s,c,r}};
 const clash=(a,ta,b,tb)=>{const p=pos(a,ta),q=pos(b,tb);return Math.abs(p.x-q.x)<78&&Math.abs(p.y-q.y)<74};
 const ad=(x,y)=>{const d=Math.abs(x-y)%360;return d>180?360-d:d};
-const shuf=a=>a.slice().sort(()=>Math.random()-.5),rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a},rnd=a=>a[Math.floor(Math.random()*a.length)];
 // 1 close neighbour, 2 somewhat close, 2 far (well-known) + 1 extra far arrow for the hint
 function build(M){
 const o=U.filter(c=>c!==M).map(c=>({c,d:dist(M,c),b:brg(M,c)})).filter(x=>x.d>=150).sort((p,q)=>p.d-q.d);
@@ -645,7 +645,7 @@ fl+=`<div class="fl" style="left:${p.x/6}%;top:${p.y/4.4}%">${img(x.c.i)}<span>$
 $("sv").innerHTML=`<defs><marker id="ah" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0L6,3L0,6z" fill="var(--fg)"/></marker></defs><circle cx="300" cy="220" r="58" fill="var(--card)" stroke="var(--ln)" stroke-width="2"/>`+sv;$("fl").innerHTML=fl}
 function stats(){$("rd").textContent=`City ${i+1} / 5 · ${cn}`;$("tot").textContent=`Total: ${total.toLocaleString("en")} / 10,000`}
 function hb(){$("hint").textContent=`Hint (−${hc}) · ${hs.length-hu} left`}
-function reset(){const c=CATS[+$("cat").value];cn=c[0];pool=C.filter(c[1]);E=pool.flatMap(p=>p.a.map(x=>({n:x,it:p})));hs=Array.isArray(c[2])?c[2].slice():c[2]?["c","x"]:["x"];hc=hs.length>=3?200:250;$("end").hidden=true;$("play").hidden=false;total=0;res=[];i=-1;G=[];
+function reset0(){const c=CATS[+$("cat").value];cn=c[0];pool=C.filter(c[1]);E=pool.flatMap(p=>p.a.map(x=>({n:x,it:p})));hs=Array.isArray(c[2])?c[2].slice():c[2]?["c","x"]:["x"];hc=hs.length>=3?200:250;$("end").hidden=true;$("play").hidden=false;total=0;res=[];i=-1;G=[];
 for(const m of shuf(pool.filter(c=>!c.sp))){const r=build(m);if(r)G.push({m,r:r.r,tw:r.tw});if(G.length===5)break}
 const sc=pool.filter(c=>SP[c.n]);if(sc.length&&Math.random()<.05)G[Math.floor(Math.random()*5)]=special(rnd(sc))}
 function init(){reset();state="idle";$("st").hidden=false;$("fl").innerHTML="";$("sv").innerHTML="";$("ct").innerHTML="City<br>?";
@@ -656,7 +656,7 @@ $("ct").innerHTML="City<br>?";msg.textContent="Which city is in the middle?";$("
 $("cg").textContent=1000;$("sp").textContent=1000;show();t0=performance.now();clearInterval(timer);timer=setInterval(tick,10);stats();if(!matchMedia("(pointer:coarse)").matches)q.focus()}
 function tick(){if(state==="play")$("sp").textContent=Math.floor(sp(el()))}
 function nmFit(n){const lw=Math.max(...n.split(" ").map(w=>w.length));let k=Math.min(1,7.5/lw);if(n.length>14)k*=.85;k=Math.max(k,.5);return `<span style="font-size:${k.toFixed(2)}em;display:block;overflow-wrap:anywhere">${n}</span>`}
-function fin(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.m.n,p]);msg.textContent=t+(cur.sp?` Surprise round: ${cur.m.n} is surrounded by ${SP[cur.m.n]}!`:"")+(cur.m.a.length>1?" (also accepted: "+cur.m.a.slice(1).join(" / ")+")":"");$("hints").textContent=cur.m.f||"";$("ct").innerHTML=img(cur.m.i)+nmFit(cur.m.n);
+function fin0(p,t){state="done";clearInterval(timer);total+=p;res.push([cur.m.n,p]);msg.textContent=t+(cur.sp?` Surprise round: ${cur.m.n} is surrounded by ${SP[cur.m.n]}!`:"")+(cur.m.a.length>1?" (also accepted: "+cur.m.a.slice(1).join(" / ")+")":"");$("hints").textContent=cur.m.f||"";$("ct").innerHTML=img(cur.m.i)+nmFit(cur.m.n);
 $("nx").hidden=false;$("nx").textContent=i<4?"Next":"See results";$("hint").disabled=$("give").disabled=true;stats()}
 const NEAR=1; // 1 = a wrong guess within 200 km gets a friendly message instead of a penalty (cities, landmarks)
 function guess(){sg.hidden=true;if(state!=="play")return;const m=(E.find(e=>N(e.n)===N(q.value))||{}).it;
@@ -665,7 +665,7 @@ if(m!==cur.m&&(NEAR||!cur.tw.includes(m))){q.value="";
 if(NEAR&&dist(m,cur.m)<200){msg.textContent="📍 You are really close! No points lost, try again.";return}
 wrong++;$("cg").textContent=cgv();msg.textContent="✗ Not "+m.n+". −50 points (correct guess now worth "+cgv()+")";return}
 const s=Math.floor(sp(el())),b=cgv();$("sp").textContent=s;fin(b+s,`✓ Correct! ${m!==cur.m?m.n+" counts too (arrows were drawn from "+cur.m.n+"): ":cur.m.n+": "}${b} + ${s} speed = ${b+s} points`)}
-function finish(){$("play").hidden=true;$("end").hidden=false;
+function finish0(){$("play").hidden=true;$("end").hidden=false;
 $("end").innerHTML=`<div class="big">${total.toLocaleString("en")} / 10,000</div><table>${res.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><div class="row"><button id="again">Play again</button><button id="shr" class="s">Share my score</button></div>`;$("again").onclick=init;$("shr").onclick=()=>shareScore("Which City?")}
 function shareScore(game){const t="Mapzino · "+game+": "+total.toLocaleString("en")+" / 10,000. Can you beat me? https://mapzino.com";
 if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("shr").textContent="Copied!"},()=>{prompt("Copy your score:",t)})}}
@@ -695,5 +695,13 @@ $("theme").innerHTML=TH.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join(
 function setTh(v){if(v==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=v;$("theme").value=v}
 $("theme").onchange=e=>{setTh(e.target.value);try{localStorage.setItem("th",e.target.value)}catch(x){}};
 try{const v=localStorage.getItem("th");if(v&&TH.some(t=>t[0]===v))setTh(v)}catch(x){}
-init();
+function reset(){if(!MZ.on)return reset0();$("cat").value=0;MZ.seeded(reset0)}
+function fin(p,t){fin0(p,t);if(MZ.on)MZ.progress(total,res)}
+function finish(){finish0();if(MZ.on)MZ.endUI($("end"),total,res)}
+function dailyBoot(){const a=document.querySelector(".back");a.href="daily.html";a.textContent="← Daily challenges";$("cat").hidden=true;
+document.querySelector("h1").textContent+=" · Daily";$("start").textContent="Start today's challenge";
+msg.textContent="Daily challenge "+MZ.DAY+": everyone gets the same 5 puzzles today. One try. Points begin to drop 5 seconds after each puzzle appears.";
+$("start").addEventListener("click",()=>MZ.started());
+const sv=MZ.load();if(sv){$("st").hidden=true;total=sv.t;res=sv.r;finish()}}
+init();if(MZ.on)dailyBoot();
 </script></body></html>
